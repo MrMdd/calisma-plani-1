@@ -2,232 +2,409 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Çalışma Planı</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Planım</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d0d0d;--surface:#141414;--surface2:#1c1c1c;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --bg:#0d0d0d;--surface:#141414;--s2:#1c1c1c;--s3:#222;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.15);
   --chalk:#ede9e0;--dim:#888078;--dim2:#555;
   --y:#f5c842;--g:#6ecfa8;--r:#e8725d;--b:#5aade0;--p:#a98fe0;--o:#e0a05a;
+  --nav-h:52px;--bot-h:60px;
 }
-html{font-size:14px}
-body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--chalk);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 32px,rgba(255,255,255,0.025) 32px,rgba(255,255,255,0.025) 33px);pointer-events:none;z-index:0}
+html,body{height:100%;font-size:14px}
+body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--chalk);overflow-x:hidden;padding-bottom:var(--bot-h)}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 32px,rgba(255,255,255,0.022) 32px,rgba(255,255,255,0.022) 33px);pointer-events:none;z-index:0}
 
-.topnav{display:flex;align-items:center;border-bottom:1px solid var(--border);background:rgba(14,14,14,0.95);position:sticky;top:0;z-index:40;backdrop-filter:blur(8px)}
-.nav-logo{font-family:'Caveat',cursive;font-size:1.3rem;font-weight:700;padding:0 20px;color:var(--chalk);white-space:nowrap;border-right:1px solid var(--border);line-height:48px}
-.nav-tabs{display:flex;flex:1}
-.nav-tab{background:none;border:none;border-right:1px solid var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:0.72rem;padding:0 22px;height:48px;cursor:pointer;letter-spacing:0.06em;transition:color .15s,background .15s;white-space:nowrap}
-.nav-tab:hover{color:var(--chalk);background:rgba(255,255,255,0.03)}
-.nav-tab.active{color:var(--y);border-bottom:2px solid var(--y);background:rgba(245,200,66,0.04)}
+/* ── TOP NAV (desktop only) ── */
+.topnav{display:flex;align-items:center;border-bottom:1px solid var(--border);background:rgba(13,13,13,0.96);position:sticky;top:0;z-index:40;backdrop-filter:blur(10px);height:var(--nav-h)}
+.nav-logo{font-family:'Caveat',cursive;font-size:1.25rem;font-weight:700;padding:0 18px;color:var(--chalk);border-right:1px solid var(--border);height:100%;display:flex;align-items:center;white-space:nowrap;flex-shrink:0}
+.nav-tabs{display:flex;height:100%;overflow:hidden}
+.nav-tab{background:none;border:none;border-right:1px solid var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:0.72rem;padding:0 20px;height:100%;cursor:pointer;letter-spacing:.06em;transition:color .15s,background .15s;white-space:nowrap;flex-shrink:0}
+.nav-tab:hover{color:var(--chalk);background:rgba(255,255,255,.03)}
+.nav-tab.active{color:var(--y);border-bottom:2px solid var(--y)}
 
-.page{display:none;padding:28px 24px 80px;max-width:920px;margin:0 auto;position:relative;z-index:1;animation:fadeIn .2s ease}
+/* ── BOTTOM NAV (mobile) ── */
+.botnav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bot-h);background:rgba(13,13,13,0.97);border-top:1px solid var(--border);z-index:40;backdrop-filter:blur(10px)}
+.botnav-inner{display:flex;height:100%;max-width:480px;margin:0 auto;width:100%}
+.botnav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;color:var(--dim);font-family:'DM Mono',monospace;font-size:0.58rem;letter-spacing:.05em;cursor:pointer;transition:color .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.botnav-tab .icon{font-size:1.25rem;line-height:1}
+.botnav-tab.active{color:var(--y)}
+.botnav-tab.active .icon{filter:drop-shadow(0 0 4px rgba(245,200,66,.5))}
+
+@media(max-width:700px){
+  .topnav{display:none}
+  .botnav{display:flex}
+  body{padding-bottom:var(--bot-h)}
+}
+
+/* ── PAGES ── */
+.page{display:none;position:relative;z-index:1;animation:fadeIn .18s ease}
 .page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
-.section-title{font-family:'Caveat',cursive;font-size:1.5rem;font-weight:700;margin-bottom:20px;color:var(--chalk)}
-input,textarea{font-family:'DM Mono',monospace;color:var(--chalk)}
-button{cursor:pointer}
+.page-inner{padding:20px 16px 32px;max-width:1100px;margin:0 auto}
+@media(min-width:701px){.page-inner{padding:24px 24px 40px}}
 
-/* ─ DAY STRIP ─ */
-.day-strip-wrap{display:flex;align-items:center;gap:7px;margin-bottom:22px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.day-strip-wrap::-webkit-scrollbar{display:none}
-.day-chip{flex-shrink:0;background:none;border:1px solid var(--border2);border-radius:8px;color:var(--dim);font-family:'DM Mono',monospace;font-size:0.7rem;padding:6px 15px;transition:all .15s;white-space:nowrap;letter-spacing:.03em}
-.day-chip:hover{border-color:rgba(255,255,255,.3);color:var(--chalk)}
-.day-chip.active{background:var(--y);border-color:var(--y);color:#111;font-weight:500}
-.day-chip.is-today{border-color:var(--g);color:var(--g)}
-.day-chip.is-today.active{background:var(--g);border-color:var(--g);color:#111}
-.add-day-chip{flex-shrink:0;background:none;border:1px dashed rgba(255,255,255,.18);border-radius:8px;color:var(--dim);font-size:1rem;padding:4px 13px;transition:all .15s}
-.add-day-chip:hover{border-color:var(--y);color:var(--y)}
+/* ── DAY STRIP ── */
+.strip-wrap{display:flex;align-items:center;gap:0;margin-bottom:18px;background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.strip-past-btn{flex-shrink:0;background:none;border:none;border-right:1px solid var(--border);color:var(--dim);font-size:1rem;padding:0 14px;height:44px;cursor:pointer;transition:color .15s;-webkit-tap-highlight-color:transparent}
+.strip-past-btn:hover{color:var(--chalk)}
+.strip-scroll{display:flex;flex:1;overflow-x:auto;scrollbar-width:none;height:44px;align-items:center}
+.strip-scroll::-webkit-scrollbar{display:none}
+.day-chip{flex-shrink:0;background:none;border:none;border-right:1px solid var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:0.68rem;padding:0 14px;height:44px;cursor:pointer;letter-spacing:.03em;white-space:nowrap;transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.day-chip:hover{color:var(--chalk);background:rgba(255,255,255,.04)}
+.day-chip.active{color:#111;background:var(--y);font-weight:500}
+.day-chip.is-today{color:var(--g)}
+.day-chip.is-today.active{background:var(--g);color:#111}
+.strip-more-btn{flex-shrink:0;background:none;border:none;border-left:1px solid var(--border);color:var(--dim);font-size:.72rem;padding:0 14px;height:44px;cursor:pointer;letter-spacing:.04em;transition:color .15s;white-space:nowrap}
+.strip-more-btn:hover{color:var(--y)}
 
-/* ─ DAY VIEW ─ */
-.day-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px}
-.day-name-input{font-family:'Caveat',cursive;font-size:1.55rem;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;outline:none;color:var(--chalk);padding-bottom:2px;transition:border-color .15s;width:auto;min-width:80px}
-.day-name-input:focus{border-bottom-color:var(--y)}
-.day-stats{margin-left:auto;text-align:right;flex-shrink:0}
-.day-stats .tot{font-size:.7rem;color:var(--y);letter-spacing:.05em}
-.day-stats .cnt{font-size:.64rem;color:var(--dim);margin-top:2px}
+/* Past days modal */
+.past-modal{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:70;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.past-modal.open{opacity:1;pointer-events:all}
+.past-sheet{background:#181818;border:1px solid rgba(255,255,255,.12);border-radius:16px 16px 0 0;padding:20px 18px 32px;width:100%;max-width:480px;transform:translateY(20px);transition:transform .2s;max-height:70vh;overflow-y:auto}
+.past-modal.open .past-sheet{transform:translateY(0)}
+.past-sheet h3{font-family:'Caveat',cursive;font-size:1.3rem;margin-bottom:14px;color:var(--chalk)}
+.past-day-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:.78rem;cursor:pointer;transition:border-color .15s}
+.past-day-item:hover{border-color:var(--y)}
+.past-day-item .pdi-right{font-size:.66rem;color:var(--dim)}
 
-.prog-bar{height:2px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:20px;overflow:hidden}
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--y));border-radius:2px;transition:width .4s ease}
+/* ── SPLIT LAYOUT (Plan page) ── */
+.split{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:860px){.split{grid-template-columns:280px 1fr}}
 
-.task-list{display:flex;flex-direction:column;gap:8px;min-height:50px}
-.task-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;position:relative;overflow:hidden;transition:background .15s,border-color .15s}
-.task-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--stripe,rgba(255,255,255,.2))}
-.task-card:hover{background:#222;border-color:var(--border2)}
-.task-card.done{opacity:.45}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.panel-hdr{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.02)}
+.panel-hdr-title{font-family:'Caveat',cursive;font-size:1.1rem;font-weight:700;flex:1}
+.panel-body{padding:12px}
+
+/* Pool panel */
+.pool-cat{margin-bottom:10px}
+.pool-cat-hdr{display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:4px 6px;border-radius:6px}
+.pool-cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pool-cat-name{font-size:.7rem;font-weight:500;color:var(--chalk);letter-spacing:.04em;flex:1}
+.pool-item{display:flex;align-items:center;gap:6px;padding:7px 8px;background:var(--s2);border:1px solid transparent;border-radius:7px;margin-bottom:4px;cursor:grab;transition:all .15s;touch-action:none}
+.pool-item:hover{border-color:var(--border2);background:var(--s3)}
+.pool-item.dragging{opacity:.3}
+.pi-drag{color:var(--dim2);font-size:.8rem;flex-shrink:0;user-select:none}
+.pi-text{font-family:'Caveat',cursive;font-size:.95rem;font-weight:600;flex:1;color:var(--chalk);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pi-dur{font-size:.6rem;color:var(--dim);flex-shrink:0}
+.pi-add{background:none;border:none;color:var(--dim);font-size:.8rem;padding:2px 4px;border-radius:3px;transition:color .12s;flex-shrink:0;-webkit-tap-highlight-color:transparent}
+.pi-add:hover{color:var(--y)}
+.add-pool-bar{display:flex;gap:6px;align-items:center;padding:6px 8px;border:1px dashed rgba(255,255,255,.12);border-radius:7px;margin-top:2px}
+.add-pool-bar:focus-within{border-style:solid;border-color:var(--y)}
+.api{flex:1;font-family:'Caveat',cursive;font-size:.9rem;background:none;border:none;outline:none;color:var(--chalk)}
+.api::placeholder{color:rgba(255,255,255,.2)}
+.apd{width:56px;font-size:.62rem;background:none;border:none;outline:none;color:var(--dim);text-align:right}
+.apd::placeholder{color:rgba(255,255,255,.18)}
+
+/* Plan panel (right) */
+.day-hdr{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.day-name-in{font-family:'Caveat',cursive;font-size:1.45rem;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;outline:none;color:var(--chalk);transition:border-color .15s;min-width:60px}
+.day-name-in:focus{border-bottom-color:var(--y)}
+.day-stats-wrap{margin-left:auto;text-align:right;flex-shrink:0}
+.dst-tot{font-size:.68rem;color:var(--y)}
+.dst-cnt{font-size:.62rem;color:var(--dim);margin-top:1px}
+
+.prog-bar{height:2px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:14px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--y));border-radius:2px;transition:width .4s}
+
+.task-list{display:flex;flex-direction:column;gap:7px;min-height:48px}
+.drop-zone{border:1.5px dashed rgba(245,200,66,.25);border-radius:9px;padding:11px;text-align:center;font-size:.66rem;color:rgba(245,200,66,.4);letter-spacing:.05em;margin-top:8px;transition:all .2s}
+.drop-zone.dz-active{border-color:var(--y);color:var(--y);background:rgba(245,200,66,.05)}
+
+.task-card{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:10px 11px;display:flex;align-items:flex-start;gap:9px;position:relative;overflow:hidden;transition:background .15s,border-color .15s}
+.task-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:9px 0 0 9px;background:var(--stripe,rgba(255,255,255,.2))}
+.task-card:hover{background:var(--s3);border-color:var(--border2)}
+.task-card.done{opacity:.42}
 .task-card.done .t-text{text-decoration:line-through}
 
-.chk{width:16px;height:16px;border:2px solid rgba(255,255,255,.22);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.68rem;margin-top:2px;transition:all .15s}
+.chk{width:15px;height:15px;border:2px solid rgba(255,255,255,.22);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.62rem;margin-top:2px;cursor:pointer;transition:all .15s}
 .task-card.done .chk{background:var(--g);border-color:var(--g);color:#111}
 
 .t-body{flex:1;min-width:0}
-.t-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-.t-text{font-family:'Caveat',cursive;font-size:1.08rem;font-weight:600;background:none;border:none;outline:none;color:var(--chalk);flex:1;min-width:60px;padding:0}
-.t-text:focus{border-bottom:1px solid rgba(255,255,255,.18)}
-.t-dur{font-size:.66rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:var(--dim);padding:2px 7px;width:78px;text-align:center;outline:none;transition:border-color .15s}
+.t-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.t-text{font-family:'Caveat',cursive;font-size:1.05rem;font-weight:600;background:none;border:none;outline:none;color:var(--chalk);flex:1;min-width:40px;padding:0}
+.t-text:focus{border-bottom:1px solid rgba(255,255,255,.15)}
+.t-dur{font-size:.62rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:var(--dim);padding:2px 6px;width:70px;text-align:center;outline:none;transition:border-color .15s}
 .t-dur:focus{border-color:var(--y);color:var(--chalk)}
 .t-dur::placeholder{color:rgba(255,255,255,.18)}
-.t-dots{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
-.cdot{width:9px;height:9px;border-radius:50%;border:1.5px solid transparent;transition:all .12s}
-.cdot:hover,.cdot.sel{border-color:#fff;transform:scale(1.3)}
+.t-dots{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.cdot{width:8px;height:8px;border-radius:50%;border:1.5px solid transparent;cursor:pointer;transition:all .12s;flex-shrink:0}
+.cdot:hover,.cdot.sel{border-color:#fff;transform:scale(1.35)}
+.t-acts{display:flex;gap:1px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.task-card:hover .t-acts,.task-card:focus-within .t-acts{opacity:1}
+.ib{background:none;border:none;color:var(--dim);padding:4px;border-radius:4px;font-size:.72rem;cursor:pointer;transition:color .12s;line-height:1}
+.ib:hover{color:var(--r)}
 
-.t-acts{display:flex;gap:2px;opacity:0;transition:opacity .15s;flex-shrink:0}
-.task-card:hover .t-acts{opacity:1}
-.ib{background:none;border:none;color:var(--dim);padding:4px;border-radius:4px;font-size:.75rem;transition:color .12s,background .12s;line-height:1}
-.ib:hover{color:var(--r);background:rgba(255,255,255,.05)}
-
-.drop-zone{border:1.5px dashed rgba(245,200,66,.25);border-radius:10px;padding:12px;text-align:center;font-size:.68rem;color:rgba(245,200,66,.45);letter-spacing:.05em;margin-top:8px;transition:all .2s}
-.drop-zone.dz-active{border-color:var(--y);color:var(--y);background:rgba(245,200,66,.04)}
-
-.add-bar{display:flex;gap:8px;align-items:center;padding:10px 13px;border:1px dashed rgba(255,255,255,.13);border-radius:10px;margin-top:8px;transition:border-color .15s}
+.add-bar{display:flex;gap:7px;align-items:center;padding:9px 11px;border:1px dashed rgba(255,255,255,.12);border-radius:9px;margin-top:7px;transition:border-color .15s}
 .add-bar:focus-within{border-style:solid;border-color:var(--y)}
-.add-bar:hover{border-color:rgba(255,255,255,.26)}
-.add-ti{flex:1;font-family:'Caveat',cursive;font-size:1.02rem;background:none;border:none;outline:none;color:var(--chalk)}
+.add-bar:hover{border-color:rgba(255,255,255,.24)}
+.add-ti{flex:1;font-family:'Caveat',cursive;font-size:1rem;background:none;border:none;outline:none;color:var(--chalk)}
 .add-ti::placeholder{color:rgba(255,255,255,.2)}
-.add-di{font-size:.66rem;background:none;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:var(--dim);padding:2px 7px;width:74px;text-align:center;outline:none}
+.add-di{font-size:.64rem;background:none;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:var(--dim);padding:2px 6px;width:68px;text-align:center;outline:none}
 .add-di:focus{border-color:var(--y)}
 .add-di::placeholder{color:rgba(255,255,255,.18)}
-.add-btn{background:var(--y);border:none;border-radius:6px;color:#111;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:500;padding:6px 14px;letter-spacing:.03em;transition:opacity .15s}
+.add-btn{background:var(--y);border:none;border-radius:6px;color:#111;font-family:'DM Mono',monospace;font-size:.66rem;font-weight:500;padding:5px 12px;letter-spacing:.03em}
 .add-btn:hover{opacity:.82}
 
-/* ─ POOL PAGE ─ */
-.pool-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:580px){.pool-grid{grid-template-columns:1fr}}
-.pool-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:relative}
-.pool-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--stripe,#fff)}
-.pool-card-hdr{padding:13px 14px 9px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
-.pc-title{font-family:'Caveat',cursive;font-size:1.12rem;font-weight:700;flex:1;background:none;border:none;outline:none;color:var(--chalk)}
-.pc-title:focus{border-bottom:1px solid rgba(255,255,255,.2)}
-.pool-card-body{padding:10px 14px 12px 20px;display:flex;flex-direction:column;gap:5px}
-.pool-task{display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(255,255,255,.03);border:1px solid transparent;border-radius:7px;transition:all .15s;cursor:grab}
-.pool-task:hover{background:rgba(255,255,255,.07);border-color:var(--border2)}
-.pool-task.dragging{opacity:.35;cursor:grabbing}
-.pt-drag{color:var(--dim2);font-size:.85rem;flex-shrink:0;user-select:none}
-.pt-text{font-family:'Caveat',cursive;font-size:.98rem;font-weight:600;flex:1;background:none;border:none;outline:none;color:var(--chalk)}
-.pt-text:focus{border-bottom:1px solid rgba(255,255,255,.18)}
-.pt-dur{font-size:.64rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:3px;color:var(--dim);padding:1px 6px;width:68px;text-align:center;outline:none}
-.pt-dur:focus{border-color:var(--y);color:var(--chalk)}
-.pt-dur::placeholder{color:rgba(255,255,255,.18)}
-.pt-assign{background:none;border:1px solid rgba(255,255,255,.12);border-radius:5px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.62rem;padding:2px 8px;transition:all .15s;white-space:nowrap}
-.pt-assign:hover{border-color:var(--y);color:var(--y)}
-.pt-del{background:none;border:none;color:var(--dim2);font-size:.72rem;padding:3px;border-radius:3px;transition:color .12s;opacity:0;flex-shrink:0}
-.pool-task:hover .pt-del{opacity:1}
-.pt-del:hover{color:var(--r)}
-.add-pool-task{display:flex;gap:7px;align-items:center;padding:6px 9px;border:1px dashed rgba(255,255,255,.12);border-radius:7px;margin-top:2px;transition:border-color .15s}
-.add-pool-task:focus-within{border-style:solid;border-color:var(--y)}
-.apt-in{flex:1;font-family:'Caveat',cursive;font-size:.93rem;background:none;border:none;outline:none;color:var(--chalk)}
-.apt-in::placeholder{color:rgba(255,255,255,.18)}
-.apt-dur{font-size:.62rem;background:none;border:1px solid rgba(255,255,255,.08);border-radius:3px;color:var(--dim);padding:1px 6px;width:62px;text-align:center;outline:none}
-.apt-dur::placeholder{color:rgba(255,255,255,.18)}
-.apt-btn{background:none;border:none;color:var(--dim);font-size:.95rem;padding:0 3px;transition:color .15s}
-.apt-btn:hover{color:var(--y)}
-.add-pool-cat{background:none;border:1px dashed rgba(255,255,255,.14);border-radius:12px;width:100%;padding:14px;font-family:'Caveat',cursive;font-size:.98rem;color:var(--dim);letter-spacing:.04em;transition:all .15s;margin-top:2px}
-.add-pool-cat:hover{border-color:var(--y);color:var(--y)}
+/* Day notes */
+.day-notes-wrap{margin-top:14px}
+.day-notes-hdr{font-size:.68rem;color:var(--dim);letter-spacing:.06em;margin-bottom:6px;text-transform:uppercase}
+.day-note-in{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--chalk);font-family:'DM Mono',monospace;font-size:.76rem;line-height:1.6;outline:none;resize:none;min-height:72px;transition:border-color .15s}
+.day-note-in:focus{border-color:var(--y)}
+.day-note-in::placeholder{color:rgba(255,255,255,.2)}
 
-/* ─ CALENDAR ─ */
-.cal-controls{display:flex;align-items:center;gap:10px;margin-bottom:22px}
-.cal-nav{background:none;border:1px solid var(--border2);border-radius:7px;color:var(--chalk);font-size:.9rem;padding:6px 14px;transition:all .15s}
+/* ── NOTES PAGE ── */
+.notes-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:600px){.notes-grid{grid-template-columns:1fr 1fr}}
+.note-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .15s}
+.note-card:hover{border-color:var(--border2)}
+.note-card-hdr{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.02)}
+.note-card-date{font-family:'Caveat',cursive;font-size:1.05rem;font-weight:700;color:var(--chalk);cursor:pointer}
+.note-card-date:hover{color:var(--y)}
+.note-card-body{padding:12px 14px}
+.note-text{font-size:.76rem;line-height:1.65;color:var(--chalk);white-space:pre-wrap;margin-bottom:10px}
+.note-to-pool-btn{background:none;border:1px solid rgba(255,255,255,.12);border-radius:6px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.64rem;padding:5px 12px;transition:all .15s;cursor:pointer}
+.note-to-pool-btn:hover{border-color:var(--y);color:var(--y)}
+.empty-notes{text-align:center;padding:40px 20px;color:var(--dim);font-size:.78rem;letter-spacing:.04em}
+.empty-notes .ei{font-size:1.8rem;margin-bottom:10px}
+
+/* ── CALENDAR PAGE ── */
+.cal-controls{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.cal-nav{background:none;border:1px solid var(--border2);border-radius:7px;color:var(--chalk);font-size:.85rem;padding:6px 13px;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
 .cal-nav:hover{border-color:var(--y);color:var(--y)}
-.cal-title{font-family:'Caveat',cursive;font-size:1.35rem;font-weight:700;flex:1;text-align:center}
+.cal-title{font-family:'Caveat',cursive;font-size:1.3rem;font-weight:700;flex:1;text-align:center}
 .cal-view-toggle{display:flex;border:1px solid var(--border2);border-radius:8px;overflow:hidden}
-.cvt{background:none;border:none;color:var(--dim);font-family:'DM Mono',monospace;font-size:.68rem;padding:7px 15px;letter-spacing:.04em;transition:all .15s}
+.cvt{background:none;border:none;color:var(--dim);font-family:'DM Mono',monospace;font-size:.66rem;padding:7px 14px;letter-spacing:.04em;cursor:pointer;transition:all .15s}
 .cvt.active{background:var(--y);color:#111;font-weight:500}
 
 .cal-month{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.cal-dow{text-align:center;font-size:.62rem;color:var(--dim);letter-spacing:.06em;padding:6px 0;text-transform:uppercase}
-.cal-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:78px;padding:6px;cursor:pointer;transition:border-color .15s,background .15s}
+.cal-dow{text-align:center;font-size:.6rem;color:var(--dim);letter-spacing:.05em;padding:5px 0;text-transform:uppercase}
+.cal-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:72px;padding:5px;cursor:pointer;transition:border-color .15s,background .15s}
 .cal-cell:hover{border-color:var(--border2);background:rgba(255,255,255,.02)}
-.cal-cell.other-month{opacity:.28}
+.cal-cell.other-month{opacity:.25}
 .cal-cell.today-cell{border-color:var(--g)}
 .cal-cell.has-day{border-color:rgba(245,200,66,.35)}
 .cal-cell.dz-over{border-color:var(--y);background:rgba(245,200,66,.07)}
-.cell-num{font-size:.68rem;color:var(--dim);margin-bottom:4px}
+.cell-num{font-size:.65rem;color:var(--dim);margin-bottom:3px}
 .cell-num.today-num{color:var(--g);font-weight:500}
 .cell-tasks{display:flex;flex-direction:column;gap:2px}
-.cell-pill{font-size:.58rem;border-radius:3px;padding:1px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#111;font-weight:500}
-.cell-more{font-size:.56rem;color:var(--dim);margin-top:1px}
+.cell-pill{font-size:.55rem;border-radius:3px;padding:1px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#111;font-weight:500}
+.cell-more{font-size:.54rem;color:var(--dim);margin-top:1px}
 
-.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.week-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;min-height:180px;overflow:hidden;cursor:pointer;transition:border-color .15s,background .15s}
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.week-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;min-height:160px;overflow:hidden;cursor:pointer;transition:border-color .15s}
 .week-col:hover{border-color:var(--border2)}
 .week-col.today-col{border-color:var(--g)}
 .week-col.has-day{border-color:rgba(245,200,66,.35)}
 .week-col.dz-over{border-color:var(--y);background:rgba(245,200,66,.06)}
-.week-hdr{padding:8px;border-bottom:1px solid var(--border);text-align:center}
-.week-dow{font-size:.6rem;color:var(--dim);letter-spacing:.05em;text-transform:uppercase}
-.week-num{font-family:'Caveat',cursive;font-size:1.2rem;font-weight:700}
+.week-hdr{padding:7px;border-bottom:1px solid var(--border);text-align:center}
+.week-dow{font-size:.58rem;color:var(--dim);letter-spacing:.05em;text-transform:uppercase}
+.week-num{font-family:'Caveat',cursive;font-size:1.15rem;font-weight:700}
 .week-num.today-num{color:var(--g)}
-.week-tasks{padding:6px;display:flex;flex-direction:column;gap:3px}
-.week-pill{font-size:.6rem;border-radius:4px;padding:3px 6px;color:#111;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.week-more{font-size:.57rem;color:var(--dim);padding:0 6px 4px}
+.week-tasks{padding:5px;display:flex;flex-direction:column;gap:3px}
+.week-pill{font-size:.58rem;border-radius:4px;padding:2px 5px;color:#111;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.week-more{font-size:.55rem;color:var(--dim);padding:0 5px 3px}
 
-/* ─ MODAL ─ */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+/* ── MODALS ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;pointer-events:none;transition:opacity .2s}
 .modal-overlay.open{opacity:1;pointer-events:all}
-.modal{background:#181818;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:24px 22px;width:100%;max-width:380px;transform:translateY(8px);transition:transform .2s}
+.modal{background:#181818;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:22px 20px;width:100%;max-width:360px;transform:translateY(8px);transition:transform .2s}
 .modal-overlay.open .modal{transform:translateY(0)}
-.modal h2{font-family:'Caveat',cursive;font-size:1.4rem;margin-bottom:6px}
-.modal p{font-size:.73rem;color:var(--dim);margin-bottom:14px;letter-spacing:.03em}
-.day-select-list{display:flex;flex-direction:column;gap:6px;max-height:230px;overflow-y:auto;margin-bottom:14px;padding-right:4px}
-.dsl-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;font-size:.76rem;transition:all .15s}
-.dsl-item:hover{border-color:var(--y);background:rgba(245,200,66,.05)}
-.dsl-btn{background:var(--y);border:none;border-radius:5px;color:#111;font-family:'DM Mono',monospace;font-size:.66rem;padding:4px 12px;font-weight:500}
-.modal-close{background:none;border:1px solid var(--border2);border-radius:7px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.72rem;padding:8px 18px;float:right}
+.modal h2{font-family:'Caveat',cursive;font-size:1.35rem;margin-bottom:6px}
+.modal p{font-size:.72rem;color:var(--dim);margin-bottom:12px;letter-spacing:.03em}
+.dsl{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto;margin-bottom:12px}
+.dsl-item{display:flex;align-items:center;justify-content:space-between;padding:8px 11px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;font-size:.74rem;cursor:pointer;transition:all .15s}
+.dsl-item:hover{border-color:var(--y)}
+.dsl-btn{background:var(--y);border:none;border-radius:5px;color:#111;font-family:'DM Mono',monospace;font-size:.64rem;padding:3px 10px;font-weight:500;cursor:pointer}
+.modal-close{background:none;border:1px solid var(--border2);border-radius:7px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.7rem;padding:7px 16px;cursor:pointer;float:right}
 .modal-close:hover{color:var(--chalk)}
 
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(14px);background:#1e1e1e;border:1px solid rgba(255,255,255,.12);color:var(--chalk);font-size:.73rem;padding:10px 20px;border-radius:8px;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:100;letter-spacing:.03em;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* note-to-pool modal */
+.ntp-input{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--chalk);font-family:'DM Mono',monospace;font-size:.8rem;padding:9px 12px;outline:none;margin-bottom:10px;transition:border-color .15s}
+.ntp-input:focus{border-color:var(--y)}
+.ntp-row{display:flex;gap:8px;margin-bottom:10px}
+.ntp-dur{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--chalk);font-family:'DM Mono',monospace;font-size:.78rem;padding:8px 12px;outline:none;transition:border-color .15s}
+.ntp-dur:focus{border-color:var(--y)}
+.ntp-cat-sel{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:8px;color:var(--chalk);font-family:'DM Mono',monospace;font-size:.72rem;padding:8px 12px;outline:none;cursor:pointer}
+.ntp-confirm{background:var(--y);border:none;border-radius:8px;color:#111;font-family:'DM Mono',monospace;font-size:.76rem;font-weight:500;padding:9px 18px;cursor:pointer;width:100%;margin-bottom:8px}
+.modal-actions{display:flex;justify-content:flex-end}
 
-.empty{text-align:center;padding:32px 20px;color:var(--dim);font-size:.76rem;letter-spacing:.04em}
-.empty .ei{font-size:1.7rem;margin-bottom:8px}
+/* pool page */
+.pool-page-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:580px){.pool-page-grid{grid-template-columns:1fr}}
+.ppc{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:relative}
+.ppc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--stripe,#fff)}
+.ppc-hdr{padding:12px 14px 9px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.02)}
+.ppc-title{font-family:'Caveat',cursive;font-size:1.1rem;font-weight:700;flex:1;background:none;border:none;outline:none;color:var(--chalk)}
+.ppc-title:focus{border-bottom:1px solid rgba(255,255,255,.18)}
+.ppc-body{padding:10px 14px 12px 20px;display:flex;flex-direction:column;gap:5px}
+.ppt{display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(255,255,255,.03);border:1px solid transparent;border-radius:7px;transition:all .15s;cursor:grab}
+.ppt:hover{background:rgba(255,255,255,.07);border-color:var(--border2)}
+.ppt.dragging{opacity:.35}
+.ppt-drag{color:var(--dim2);font-size:.8rem;user-select:none}
+.ppt-text{font-family:'Caveat',cursive;font-size:.95rem;font-weight:600;flex:1;background:none;border:none;outline:none;color:var(--chalk)}
+.ppt-text:focus{border-bottom:1px solid rgba(255,255,255,.18)}
+.ppt-dur{font-size:.62rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:3px;color:var(--dim);padding:1px 6px;width:64px;text-align:center;outline:none}
+.ppt-dur:focus{border-color:var(--y);color:var(--chalk)}
+.ppt-dur::placeholder{color:rgba(255,255,255,.18)}
+.ppt-assign{background:none;border:1px solid rgba(255,255,255,.11);border-radius:5px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.6rem;padding:2px 7px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.ppt-assign:hover{border-color:var(--y);color:var(--y)}
+.ppt-del{background:none;border:none;color:var(--dim2);font-size:.7rem;padding:2px;border-radius:3px;cursor:pointer;opacity:0;transition:color .12s}
+.ppt:hover .ppt-del{opacity:1}
+.ppt-del:hover{color:var(--r)}
+.add-ppt{display:flex;gap:6px;align-items:center;padding:6px 9px;border:1px dashed rgba(255,255,255,.11);border-radius:7px;margin-top:2px}
+.add-ppt:focus-within{border-style:solid;border-color:var(--y)}
+.add-ppt-in{flex:1;font-family:'Caveat',cursive;font-size:.9rem;background:none;border:none;outline:none;color:var(--chalk)}
+.add-ppt-in::placeholder{color:rgba(255,255,255,.18)}
+.add-ppt-dur{font-size:.6rem;background:none;border:none;outline:none;color:var(--dim);width:60px;text-align:right}
+.add-ppt-dur::placeholder{color:rgba(255,255,255,.18)}
+.add-ppt-btn{background:none;border:none;color:var(--dim);font-size:.9rem;cursor:pointer;padding:0 2px;transition:color .15s}
+.add-ppt-btn:hover{color:var(--y)}
+.add-cat-btn{background:none;border:1px dashed rgba(255,255,255,.14);border-radius:12px;width:100%;padding:13px;font-family:'Caveat',cursive;font-size:.95rem;color:var(--dim);cursor:pointer;transition:all .15s;margin-top:2px}
+.add-cat-btn:hover{border-color:var(--y);color:var(--y)}
+
+/* toast */
+.toast{position:fixed;bottom:calc(var(--bot-h) + 12px);left:50%;transform:translateX(-50%) translateY(14px);background:#1e1e1e;border:1px solid rgba(255,255,255,.12);color:var(--chalk);font-size:.72rem;padding:9px 18px;border-radius:8px;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:100;letter-spacing:.03em;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(min-width:701px){.toast{bottom:20px}}
+
+.empty{text-align:center;padding:30px 16px;color:var(--dim);font-size:.76rem;letter-spacing:.04em}
+.empty .ei{font-size:1.6rem;margin-bottom:8px}
+
+input,textarea,select{font-family:'DM Mono',monospace;color:var(--chalk)}
 </style>
 </head>
 <body>
 
+<!-- Desktop top nav -->
 <nav class="topnav">
   <div class="nav-logo">📋 Planım</div>
   <div class="nav-tabs">
     <button class="nav-tab active" onclick="showPage('plan')">Günlük Plan</button>
     <button class="nav-tab" onclick="showPage('pool')">Görev Havuzu</button>
+    <button class="nav-tab" onclick="showPage('notes')">Notlar</button>
     <button class="nav-tab" onclick="showPage('calendar')">Takvim</button>
   </div>
 </nav>
 
+<!-- Mobile bottom nav -->
+<nav class="botnav">
+  <div class="botnav-inner">
+    <button class="botnav-tab active" onclick="showPage('plan')">
+      <span class="icon">📋</span><span>Plan</span>
+    </button>
+    <button class="botnav-tab" onclick="showPage('pool')">
+      <span class="icon">📦</span><span>Havuz</span>
+    </button>
+    <button class="botnav-tab" onclick="showPage('notes')">
+      <span class="icon">📝</span><span>Notlar</span>
+    </button>
+    <button class="botnav-tab" onclick="showPage('calendar')">
+      <span class="icon">📅</span><span>Takvim</span>
+    </button>
+  </div>
+</nav>
+
+<!-- PLAN PAGE -->
 <div class="page active" id="page-plan">
-  <div class="day-strip-wrap" id="dayStrip"></div>
-  <div id="dayView"></div>
-</div>
-
-<div class="page" id="page-pool">
-  <div class="section-title">Görev Havuzu</div>
-  <p style="font-size:.72rem;color:var(--dim);margin-bottom:18px;letter-spacing:.03em">Görevleri buraya ekle, sonra güne sürükle veya "Güne Ekle" ile ata.</p>
-  <div class="pool-grid" id="poolGrid"></div>
-  <button class="add-pool-cat" onclick="addCategory()">+ Yeni Kategori Ekle</button>
-</div>
-
-<div class="page" id="page-calendar">
-  <div class="cal-controls">
-    <button class="cal-nav" onclick="calNav(-1)">←</button>
-    <div class="cal-title" id="calTitle"></div>
-    <button class="cal-nav" onclick="calNav(1)">→</button>
-    <div class="cal-view-toggle">
-      <button class="cvt active" onclick="setCalView('month')">Aylık</button>
-      <button class="cvt" onclick="setCalView('week')">Haftalık</button>
+  <div class="page-inner">
+    <div class="strip-wrap" id="stripWrap">
+      <button class="strip-past-btn" onclick="openPast()" title="Geçmiş günler">···</button>
+      <div class="strip-scroll" id="stripScroll"></div>
+      <button class="strip-more-btn" onclick="loadMoreDays()">+ 7 gün</button>
+    </div>
+    <div class="split">
+      <div class="panel">
+        <div class="panel-hdr">
+          <span>📋</span>
+          <div class="panel-hdr-title" id="planPanelTitle">Bugünün Planı</div>
+        </div>
+        <div class="panel-body" id="planPanelBody"></div>
+      </div>
+      <div class="panel" id="poolPanel">
+        <div class="panel-hdr">
+          <span>📦</span>
+          <div class="panel-hdr-title">Görev Havuzu</div>
+        </div>
+        <div class="panel-body" id="poolPanelBody"></div>
+      </div>
     </div>
   </div>
-  <div id="calBody"></div>
 </div>
 
-<div class="modal-overlay" id="assignModal">
+<!-- POOL PAGE -->
+<div class="page" id="page-pool">
+  <div class="page-inner">
+    <div class="section-title" style="font-family:'Caveat',cursive;font-size:1.5rem;font-weight:700;margin-bottom:6px">Görev Havuzu</div>
+    <p style="font-size:.7rem;color:var(--dim);margin-bottom:18px;letter-spacing:.03em">Görevleri kategorilere ekle, Plan sayfasında sürükleyerek güne taşı.</p>
+    <div class="pool-page-grid" id="poolPageGrid"></div>
+    <button class="add-cat-btn" onclick="addCategory()">+ Yeni Kategori</button>
+  </div>
+</div>
+
+<!-- NOTES PAGE -->
+<div class="page" id="page-notes">
+  <div class="page-inner">
+    <div class="section-title" style="font-family:'Caveat',cursive;font-size:1.5rem;font-weight:700;margin-bottom:6px">Notlar</div>
+    <p style="font-size:.7rem;color:var(--dim);margin-bottom:18px;letter-spacing:.03em">Her günün notları burada toplanır. Nottan doğrudan görev havuzuna ekleyebilirsin.</p>
+    <div class="notes-grid" id="notesGrid"></div>
+  </div>
+</div>
+
+<!-- CALENDAR PAGE -->
+<div class="page" id="page-calendar">
+  <div class="page-inner">
+    <div class="cal-controls">
+      <button class="cal-nav" onclick="calNav(-1)">←</button>
+      <div class="cal-title" id="calTitle"></div>
+      <button class="cal-nav" onclick="calNav(1)">→</button>
+      <div class="cal-view-toggle">
+        <button class="cvt active" onclick="setCalView('month')">Aylık</button>
+        <button class="cvt" onclick="setCalView('week')">Haftalık</button>
+      </div>
+    </div>
+    <div id="calBody"></div>
+  </div>
+</div>
+
+<!-- Past days modal -->
+<div class="past-modal" id="pastModal" onclick="if(event.target===this)closePast()">
+  <div class="past-sheet">
+    <h3>Geçmiş Günler</h3>
+    <div id="pastList"></div>
+    <button class="modal-close" onclick="closePast()">Kapat</button>
+  </div>
+</div>
+
+<!-- Assign modal -->
+<div class="modal-overlay" id="assignModal" onclick="if(event.target===this)closeAssign()">
   <div class="modal">
     <h2>Güne Ekle</h2>
     <p id="assignDesc"></p>
-    <div class="day-select-list" id="daySelectList"></div>
+    <div class="dsl" id="daySelectList"></div>
     <button class="modal-close" onclick="closeAssign()">Kapat</button>
+  </div>
+</div>
+
+<!-- Note to pool modal -->
+<div class="modal-overlay" id="ntpModal" onclick="if(event.target===this)closeNtp()">
+  <div class="modal">
+    <h2>Havuza Ekle</h2>
+    <p style="font-size:.72rem;color:var(--dim);margin-bottom:12px">Nottan görev oluştur:</p>
+    <input class="ntp-input" id="ntpText" placeholder="Görev adı..." />
+    <div class="ntp-row">
+      <input class="ntp-dur" id="ntpDur" placeholder="Süre (örn: 1 saat)" />
+      <select class="ntp-cat-sel" id="ntpCat"></select>
+    </div>
+    <button class="ntp-confirm" onclick="confirmNtp()">Havuza Ekle ✓</button>
+    <div class="modal-actions">
+      <button class="modal-close" onclick="closeNtp()">İptal</button>
+    </div>
   </div>
 </div>
 
@@ -236,17 +413,27 @@ button{cursor:pointer}
 <script>
 const COLORS=['#f5c842','#6ecfa8','#e8725d','#5aade0','#a98fe0','#e0a05a','#a0d96c','#e05a9b'];
 const CAT_COLORS=['#f5c842','#6ecfa8','#e8725d','#5aade0','#a98fe0','#e0a05a'];
-const MONTHS_TR=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const MONTHS=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+const SMONTHS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+const DOWS_SHORT=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+
+// ── Türkiye saati ──
+function nowTR(){
+  return new Date(new Date().toLocaleString('en-US',{timeZone:'Europe/Istanbul'}));
+}
+function todayName(){
+  const d=nowTR();
+  return`${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+}
+function dateToName(date){
+  return`${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+}
+function addDaysToDate(date,n){
+  const d=new Date(date);d.setDate(d.getDate()+n);return d;
+}
 
 let data={
-  days:[{id:'d1',name:'1 Mayıs 2026',tasks:[
-    {id:'t1',text:'TYT TR+SOS Deneme',duration:'1,5 saat',done:false,color:'#f5c842'},
-    {id:'t2',text:'AYT 2024 Çıkmış',duration:'3 saat',done:false,color:'#6ecfa8'},
-    {id:'t3',text:'1 AYT Mat. Deneme',duration:'2 saat',done:false,color:'#a98fe0'},
-    {id:'t4',text:'Bağışıklık MEB Tekrarları (Biyoloji)',duration:'45 dk',done:false,color:'#5aade0'},
-    {id:'t5',text:'3 Barış PROB Denemesi',duration:'1 saat',done:false,color:'#e8725d'},
-    {id:'t6',text:'3 Eyüp B Türev 1. Soru Yorumu',duration:'1 saat',done:false,color:'#e0a05a'},
-  ]}],
+  days:[],
   pool:[
     {id:'cat1',name:'TYT',color:'#f5c842',tasks:[
       {id:'pt1',text:'TYT Matematik Denemesi',duration:'2 saat'},
@@ -257,46 +444,80 @@ let data={
       {id:'pt4',text:'AYT Kimya Deneme',duration:'2 saat'},
     ]},
   ],
-  activeDay:'d1',
+  activeDay:null,
   calView:'month',
-  calDate:''
+  calDate:'',
+  visibleFutureDays:7
 };
 
-let _di=2,_ti=20,_ci=3,_pi=10;
-let dragItem=null,assignItem=null;
+let _di=1,_ti=20,_ci=3,_pi=10;
+let dragItem=null,assignItem=null,ntpSourceNote=null;
+let currentPage='plan';
 
-function save(){try{localStorage.setItem('planV3',JSON.stringify(data))}catch(e){}}
+function save(){try{localStorage.setItem('planV4',JSON.stringify(data))}catch(e){}}
 function load(){
   try{
-    const s=localStorage.getItem('planV3');
+    const s=localStorage.getItem('planV4');
     if(s){
-      data=JSON.parse(s);
-      _di=Math.max(...data.days.map(d=>parseInt(d.id.slice(1))||0),2)+1;
+      const parsed=JSON.parse(s);
+      data={...data,...parsed};
+      // recalc ids
+      if(data.days.length){_di=Math.max(...data.days.map(d=>parseInt(d.id.replace('d',''))||0))+1;}
+      if(data.pool.length){
+        data.pool.forEach(c=>{
+          _ci=Math.max(_ci,parseInt(c.id.replace('cat',''))||0);
+          if(c.tasks.length)_pi=Math.max(_pi,...c.tasks.map(t=>parseInt(t.id.replace('pt',''))||0));
+        });
+      }
     }
   }catch(e){}
-  const now=new Date();
+  const now=nowTR();
   data.calDate=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+  ensureDays();
+  if(!data.activeDay||!data.days.find(d=>d.id===data.activeDay)){
+    const today=data.days.find(d=>d.name===todayName());
+    data.activeDay=today?today.id:data.days[0]?.id||null;
+  }
 }
 
+function ensureDays(){
+  // Ensure today + next 7 days exist in data.days
+  const base=nowTR();
+  for(let i=0;i<data.visibleFutureDays+1;i++){
+    const d=addDaysToDate(base,i);
+    const name=dateToName(d);
+    if(!data.days.find(x=>x.name===name)){
+      data.days.push({id:'d'+(++_di),name,tasks:[],note:''});
+    }
+  }
+  // sort days by date
+  data.days.sort((a,b)=>nameToDate(a.name)-nameToDate(b.name));
+}
+
+function nameToDate(name){
+  const m=name.match(/(\d+)\s+(\S+)\s+(\d{4})/);
+  if(!m)return 0;
+  const mo=MONTHS.findIndex(x=>x===m[2]);
+  return new Date(parseInt(m[3]),mo,parseInt(m[1])).getTime();
+}
+
+function loadMoreDays(){
+  data.visibleFutureDays+=7;
+  ensureDays();
+  save();
+  renderStrip();
+  toast('+7 gün eklendi');
+}
+
+// ── TOAST ──
 function toast(msg){
   const el=document.getElementById('toast');
   el.textContent=msg;el.classList.add('show');
   setTimeout(()=>el.classList.remove('show'),2200);
 }
 
-// ── PAGES ──
-function showPage(p){
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  ['plan','pool','calendar'].forEach((n,i)=>{
-    if(n===p)document.querySelectorAll('.nav-tab')[i].classList.add('active');
-  });
-  if(p==='calendar')renderCal();
-  if(p==='pool')renderPool();
-}
-
 // ── UTILS ──
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 function parseDur(s){
   if(!s)return 0;let m=0;
   const h=s.match(/(\d+[,.]?\d*)\s*saat/i);
@@ -310,78 +531,142 @@ function fmtTotal(m){
   const h=Math.floor(m/60),r=m%60;
   if(h&&r)return`${h}s ${r}dk`;if(h)return`${h} saat`;return`${r} dk`;
 }
-function isToday(name){
-  const n=new Date();
-  return name===`${n.getDate()} ${MONTHS_TR[n.getMonth()]} ${n.getFullYear()}`;
-}
-function nextDayName(name){
-  const m=name.match(/(\d+)\s*(Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık)\s*(\d{4})/i);
-  if(m){
-    const mo=MONTHS_TR.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());
-    const d=new Date(parseInt(m[3]),mo,parseInt(m[1])+1);
-    return`${d.getDate()} ${MONTHS_TR[d.getMonth()]} ${d.getFullYear()}`;
+function getActiveDay(){return data.days.find(d=>d.id===data.activeDay)||null;}
+function isPast(name){return nameToDate(name)<nameToDate(todayName());}
+function isToday(name){return name===todayName();}
+
+// ── PAGES ──
+function showPage(p){
+  currentPage=p;
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.botnav-tab').forEach(el=>el.classList.remove('active'));
+  const pages=['plan','pool','notes','calendar'];
+  const idx=pages.indexOf(p);
+  if(idx>=0){
+    document.querySelectorAll('.nav-tab')[idx]?.classList.add('active');
+    document.querySelectorAll('.botnav-tab')[idx]?.classList.add('active');
   }
-  return'Yeni Gün';
-}
-function getActiveDay(){return data.days.find(d=>d.id===data.activeDay)}
-function dayForDate(date){
-  const name=`${date.getDate()} ${MONTHS_TR[date.getMonth()]} ${date.getFullYear()}`;
-  return data.days.find(d=>d.name===name)||null;
-}
-function getOrCreateDay(date){
-  const name=`${date.getDate()} ${MONTHS_TR[date.getMonth()]} ${date.getFullYear()}`;
-  let day=data.days.find(d=>d.name===name);
-  if(!day){day={id:'d'+(++_di),name,tasks:[]};data.days.push(day);}
-  return day;
+  if(p==='calendar')renderCal();
+  if(p==='pool')renderPoolPage();
+  if(p==='notes')renderNotes();
 }
 
-// ── PLAN ──
-function renderPlan(){renderStrip();renderDayView();}
-
+// ── STRIP ──
 function renderStrip(){
-  const strip=document.getElementById('dayStrip');
-  strip.innerHTML='';
-  data.days.forEach(day=>{
+  const scroll=document.getElementById('stripScroll');
+  scroll.innerHTML='';
+  const todayStr=todayName();
+  // Only show today + future (past hidden behind ···)
+  const visible=data.days.filter(d=>!isPast(d.name));
+  visible.forEach(day=>{
     const btn=document.createElement('button');
     btn.className='day-chip'
       +(day.id===data.activeDay?' active':'')
       +(isToday(day.name)?' is-today':'');
     btn.textContent=day.name;
     btn.onclick=()=>{data.activeDay=day.id;render();};
-    strip.appendChild(btn);
+    scroll.appendChild(btn);
   });
-  const add=document.createElement('button');
-  add.className='add-day-chip';add.textContent='+';add.title='Sonraki günü ekle';
-  add.onclick=addNextDay;
-  strip.appendChild(add);
+  // scroll active chip into view
+  setTimeout(()=>{
+    const active=scroll.querySelector('.day-chip.active');
+    if(active)active.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  },50);
 }
 
-function addNextDay(){
-  const last=data.days[data.days.length-1];
-  const name=last?nextDayName(last.name):'Yeni Gün';
-  const id='d'+(++_di);
-  data.days.push({id,name,tasks:[]});
-  data.activeDay=id;
-  render();
-  toast('📅 '+name+' eklendi');
+// ── PAST MODAL ──
+function openPast(){
+  const past=data.days.filter(d=>isPast(d.name)).sort((a,b)=>nameToDate(b.name)-nameToDate(a.name));
+  const list=document.getElementById('pastList');
+  list.innerHTML='';
+  if(!past.length){list.innerHTML='<div class="empty"><div class="ei">📭</div>Geçmiş gün yok.</div>';} 
+  else {
+    past.forEach(day=>{
+      const done=day.tasks.filter(t=>t.done).length;
+      const tot=day.tasks.length;
+      const el=document.createElement('div');
+      el.className='past-day-item';
+      el.innerHTML=`<span>${escH(day.name)}</span><span class="pdi-right">${done}/${tot} görev</span>`;
+      el.onclick=()=>{data.activeDay=day.id;closePast();render();};
+      list.appendChild(el);
+    });
+  }
+  document.getElementById('pastModal').classList.add('open');
+}
+function closePast(){document.getElementById('pastModal').classList.remove('open');}
+
+// ── PLAN RENDER ──
+function render(){
+  renderStrip();
+  renderPoolPanel();
+  renderPlanPanel();
+  save();
 }
 
-function renderDayView(){
+function renderPoolPanel(){
+  const body=document.getElementById('poolPanelBody');
+  body.innerHTML='';
+  if(!data.pool.length){
+    body.innerHTML='<div class="empty" style="padding:16px 0"><div class="ei">📦</div>Havuz boş.<br>Havuz sayfasından ekle.</div>';
+    return;
+  }
+  data.pool.forEach(cat=>{
+    const wrap=document.createElement('div');
+    wrap.className='pool-cat';
+    const hdr=document.createElement('div');
+    hdr.className='pool-cat-hdr';
+    hdr.innerHTML=`<span class="pool-cat-dot" style="background:${cat.color}"></span><span class="pool-cat-name">${escH(cat.name)}</span>`;
+    wrap.appendChild(hdr);
+
+    cat.tasks.forEach(pt=>{
+      const row=document.createElement('div');
+      row.className='pool-item';
+      row.draggable=true;
+      row.addEventListener('dragstart',e=>{
+        dragItem={text:pt.text,duration:pt.duration,color:cat.color};
+        row.classList.add('dragging');
+      });
+      row.addEventListener('dragend',()=>row.classList.remove('dragging'));
+      // Touch drag
+      setupTouchDrag(row,{text:pt.text,duration:pt.duration,color:cat.color});
+      row.innerHTML=`<span class="pi-drag">⠿</span>
+        <span class="pi-text">${escH(pt.text)}</span>
+        ${pt.duration?`<span class="pi-dur">${escH(pt.duration)}</span>`:''}
+        <button class="pi-add" onclick="quickAssignToActive('${cat.id}','${pt.id}')" title="Bugüne ekle">＋</button>`;
+      wrap.appendChild(row);
+    });
+    body.appendChild(wrap);
+  });
+}
+
+function quickAssignToActive(cid,tid){
+  const cat=data.pool.find(c=>c.id===cid);
+  const pt=cat?.tasks.find(t=>t.id===tid);
+  if(!pt||!data.activeDay)return;
   const day=getActiveDay();
-  const view=document.getElementById('dayView');
-  if(!day){view.innerHTML='<div class="empty"><div class="ei">📭</div>Gün bulunamadı.</div>';return;}
+  day.tasks.push({id:'t'+(++_ti),text:pt.text,duration:pt.duration||'',done:false,color:cat.color||COLORS[0]});
+  render();toast(`"${pt.text}" eklendi ✓`);
+}
+
+function renderPlanPanel(){
+  const day=getActiveDay();
+  const body=document.getElementById('planPanelBody');
+  document.getElementById('planPanelTitle').textContent=isToday(day?.name)?'Bugünün Planı':(day?.name||'Plan');
+  if(!day){body.innerHTML='<div class="empty"><div class="ei">📭</div>Gün seçilmedi.</div>';return;}
 
   const totalM=day.tasks.reduce((a,t)=>a+parseDur(t.duration),0);
   const doneM=day.tasks.filter(t=>t.done).reduce((a,t)=>a+parseDur(t.duration),0);
   const pct=totalM?Math.round(doneM/totalM*100):0;
   const doneN=day.tasks.filter(t=>t.done).length;
 
-  view.innerHTML=`
+  body.innerHTML=`
     <div class="day-hdr">
-      <input class="day-name-input" value="${escH(day.name)}" onchange="renameDay('${day.id}',this.value)" style="width:${Math.max(160,day.name.length*11)}px"/>
-      <div class="day-stats">
-        <div class="tot">⏱ ${fmtTotal(totalM)}</div>
-        <div class="cnt">${doneN}/${day.tasks.length} tamamlandı · %${pct}</div>
+      <input class="day-name-in" value="${escH(day.name)}" onchange="renameDay('${day.id}',this.value)" style="width:${Math.max(140,day.name.length*10)}px"/>
+      <div class="day-stats-wrap">
+        <div class="dst-tot">⏱ ${fmtTotal(totalM)}</div>
+        <div class="dst-cnt">${doneN}/${day.tasks.length} · %${pct}</div>
       </div>
     </div>
     <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
@@ -389,141 +674,180 @@ function renderDayView(){
     <div class="drop-zone" id="dz"
       ondragover="event.preventDefault();document.getElementById('dz').classList.add('dz-active')"
       ondragleave="document.getElementById('dz').classList.remove('dz-active')"
-      ondrop="dropOnDay(event,'${day.id}')">
-      ↓ Havuzdan görev buraya sürükle
+      ondrop="dropOnActive(event)">
+      ↓ Havuzdan sürükle
     </div>
     <div class="add-bar">
       <span style="color:var(--dim)">→</span>
-      <input class="add-ti" id="addTI" placeholder="Yeni görev ekle..." onkeydown="if(event.key==='Enter')addTask()"/>
+      <input class="add-ti" id="addTI" placeholder="Yeni görev..." onkeydown="if(event.key==='Enter')addTask()"/>
       <input class="add-di" id="addDI" placeholder="süre" onkeydown="if(event.key==='Enter')addTask()"/>
       <button class="add-btn" onclick="addTask()">Ekle</button>
+    </div>
+    <div class="day-notes-wrap">
+      <div class="day-notes-hdr">📝 Günün Notu</div>
+      <textarea class="day-note-in" placeholder="Bu güne ait notlar, düşünceler, hatırlatmalar..." rows="3" onchange="saveNote('${day.id}',this.value)">${escH(day.note||'')}</textarea>
     </div>`;
 
   const list=document.getElementById('taskList');
   if(!day.tasks.length){
-    list.innerHTML='<div class="empty"><div class="ei">📭</div>Henüz görev yok. Aşağıdan ekle veya havuzdan sürükle.</div>';
-    return;
-  }
-  day.tasks.forEach(task=>{
-    const c=document.createElement('div');
-    c.className='task-card'+(task.done?' done':'');
-    c.style.setProperty('--stripe',task.color||COLORS[0]);
-    c.innerHTML=`
-      <div class="chk" onclick="toggleDone('${task.id}')">${task.done?'✓':''}</div>
-      <div class="t-body">
-        <div class="t-row">
-          <input class="t-text" value="${escH(task.text)}" onchange="editTask('${task.id}','text',this.value)"/>
-          <input class="t-dur" value="${escH(task.duration)}" placeholder="süre" onchange="editTask('${task.id}','duration',this.value)"/>
+    list.innerHTML='<div class="empty" style="padding:16px 0"><div class="ei">📭</div>Görev yok. Ekle veya havuzdan sürükle.</div>';
+  } else {
+    day.tasks.forEach(task=>{
+      const c=document.createElement('div');
+      c.className='task-card'+(task.done?' done':'');
+      c.style.setProperty('--stripe',task.color||COLORS[0]);
+      c.innerHTML=`
+        <div class="chk" onclick="toggleDone('${task.id}')">${task.done?'✓':''}</div>
+        <div class="t-body">
+          <div class="t-row">
+            <input class="t-text" value="${escH(task.text)}" onchange="editTask('${task.id}','text',this.value)"/>
+            <input class="t-dur" value="${escH(task.duration)}" placeholder="süre" onchange="editTask('${task.id}','duration',this.value)"/>
+          </div>
+          <div class="t-dots">${COLORS.map(col=>`<span class="cdot${task.color===col?' sel':''}" style="background:${col}" onclick="editTask('${task.id}','color','${col}')"></span>`).join('')}</div>
         </div>
-        <div class="t-dots">${COLORS.map(col=>`<span class="cdot${task.color===col?' sel':''}" style="background:${col}" onclick="editTask('${task.id}','color','${col}')"></span>`).join('')}</div>
-      </div>
-      <div class="t-acts"><button class="ib" onclick="deleteTask('${task.id}')">✕</button></div>`;
-    list.appendChild(c);
-  });
+        <div class="t-acts"><button class="ib" onclick="deleteTask('${task.id}')">✕</button></div>`;
+      list.appendChild(c);
+    });
+  }
 }
 
-function escH(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
-function toggleDone(id){const d=getActiveDay();const t=d.tasks.find(t=>t.id===id);if(t){t.done=!t.done;render();}}
-function editTask(id,f,v){const d=getActiveDay();const t=d.tasks.find(t=>t.id===id);if(t){t[f]=v;save();}}
-function deleteTask(id){const d=getActiveDay();d.tasks=d.tasks.filter(t=>t.id!==id);render();toast('Görev silindi');}
+function toggleDone(id){const d=getActiveDay();const t=d?.tasks.find(t=>t.id===id);if(t){t.done=!t.done;render();}}
+function editTask(id,f,v){const d=getActiveDay();const t=d?.tasks.find(t=>t.id===id);if(t){t[f]=v;save();}}
+function deleteTask(id){const d=getActiveDay();if(d){d.tasks=d.tasks.filter(t=>t.id!==id);render();toast('Silindi');}}
 function renameDay(id,v){const d=data.days.find(d=>d.id===id);if(d){d.name=v;renderStrip();save();}}
+function saveNote(id,v){const d=data.days.find(d=>d.id===id);if(d){d.note=v;save();}}
 function addTask(){
   const ti=document.getElementById('addTI'),di=document.getElementById('addDI');
   const text=ti.value.trim();if(!text)return;
-  const day=getActiveDay();
+  const day=getActiveDay();if(!day)return;
   day.tasks.push({id:'t'+(++_ti),text,duration:di.value.trim(),done:false,color:COLORS[day.tasks.length%COLORS.length]});
-  ti.value='';di.value='';
-  render();toast('Görev eklendi ✓');
+  ti.value='';di.value='';render();toast('Görev eklendi ✓');
 }
-function dropOnDay(e,dayId){
+function dropOnActive(e){
   e.preventDefault();
   document.getElementById('dz').classList.remove('dz-active');
   if(!dragItem)return;
-  const day=data.days.find(d=>d.id===dayId);
-  if(!day)return;
+  const day=getActiveDay();if(!day)return;
   day.tasks.push({id:'t'+(++_ti),text:dragItem.text,duration:dragItem.duration||'',done:false,color:dragItem.color||COLORS[0]});
-  dragItem=null;render();toast('Görev güne eklendi ✓');
+  dragItem=null;render();toast('Görev eklendi ✓');
 }
 
-// ── POOL ──
-function renderPool(){
-  const grid=document.getElementById('poolGrid');
+// Touch drag support
+function setupTouchDrag(el,item){
+  let clone=null,startX=0,startY=0;
+  el.addEventListener('touchstart',e=>{
+    startX=e.touches[0].clientX;startY=e.touches[0].clientY;
+    dragItem=item;
+    clone=el.cloneNode(true);
+    clone.style.cssText=`position:fixed;opacity:.7;pointer-events:none;z-index:999;width:${el.offsetWidth}px;background:#222;border-radius:8px;padding:8px 10px;font-family:'Caveat',cursive;font-size:.95rem;color:#ede9e0`;
+    document.body.appendChild(clone);
+  },{passive:true});
+  el.addEventListener('touchmove',e=>{
+    if(!clone)return;
+    const t=e.touches[0];
+    clone.style.left=(t.clientX-60)+'px';
+    clone.style.top=(t.clientY-20)+'px';
+    // highlight drop zone
+    const dz=document.getElementById('dz');
+    if(dz){
+      const r=dz.getBoundingClientRect();
+      if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom){
+        dz.classList.add('dz-active');
+      } else {dz.classList.remove('dz-active');}
+    }
+  },{passive:true});
+  el.addEventListener('touchend',e=>{
+    if(clone){clone.remove();clone=null;}
+    const dz=document.getElementById('dz');
+    if(dz){dz.classList.remove('dz-active');}
+    if(dragItem){
+      // check if over drop zone
+      const t=e.changedTouches[0];
+      const dzEl=document.getElementById('dz');
+      if(dzEl){
+        const r=dzEl.getBoundingClientRect();
+        if(t.clientX>=r.left&&t.clientX<=r.right&&t.clientY>=r.top&&t.clientY<=r.bottom){
+          const day=getActiveDay();if(day){
+            day.tasks.push({id:'t'+(++_ti),text:dragItem.text,duration:dragItem.duration||'',done:false,color:dragItem.color||COLORS[0]});
+            render();toast('Görev eklendi ✓');
+          }
+        }
+      }
+      dragItem=null;
+    }
+  });
+}
+
+// ── POOL PAGE ──
+function renderPoolPage(){
+  const grid=document.getElementById('poolPageGrid');
   grid.innerHTML='';
   data.pool.forEach(cat=>{
     const card=document.createElement('div');
-    card.className='pool-card';
-    card.style.setProperty('--stripe',cat.color||CAT_COLORS[0]);
+    card.className='ppc';card.style.setProperty('--stripe',cat.color||CAT_COLORS[0]);
     card.innerHTML=`
-      <div class="pool-card-hdr">
-        <input class="pc-title" value="${escH(cat.name)}" onchange="renameCat('${cat.id}',this.value)"/>
-        <button class="ib" onclick="deleteCat('${cat.id}')" style="opacity:.5">✕</button>
+      <div class="ppc-hdr">
+        <input class="ppc-title" value="${escH(cat.name)}" onchange="renameCat('${cat.id}',this.value)"/>
+        <button class="ib" onclick="deleteCat('${cat.id}')" style="opacity:.5;cursor:pointer">✕</button>
       </div>
-      <div class="pool-card-body" id="pb-${cat.id}"></div>`;
+      <div class="ppc-body" id="ppb-${cat.id}"></div>`;
     grid.appendChild(card);
 
-    const body=document.getElementById('pb-'+cat.id);
+    const body=document.getElementById('ppb-'+cat.id);
     cat.tasks.forEach(pt=>{
       const row=document.createElement('div');
-      row.className='pool-task';row.draggable=true;
-      row.addEventListener('dragstart',e=>{
-        dragItem={text:pt.text,duration:pt.duration,color:cat.color};
-        row.classList.add('dragging');
-      });
-      row.addEventListener('dragend',()=>{row.classList.remove('dragging');});
+      row.className='ppt';row.draggable=true;
+      row.addEventListener('dragstart',e=>{dragItem={text:pt.text,duration:pt.duration,color:cat.color};row.classList.add('dragging');});
+      row.addEventListener('dragend',()=>row.classList.remove('dragging'));
       row.innerHTML=`
-        <span class="pt-drag">⠿</span>
-        <input class="pt-text" value="${escH(pt.text)}" onchange="editPT('${cat.id}','${pt.id}','text',this.value)"/>
-        <input class="pt-dur" value="${escH(pt.duration||'')}" placeholder="süre" onchange="editPT('${cat.id}','${pt.id}','duration',this.value)"/>
-        <button class="pt-assign" onclick="openAssign('${cat.id}','${pt.id}')">+ Güne Ekle</button>
-        <button class="pt-del" onclick="deletePT('${cat.id}','${pt.id}')">✕</button>`;
+        <span class="ppt-drag">⠿</span>
+        <input class="ppt-text" value="${escH(pt.text)}" onchange="editPT('${cat.id}','${pt.id}','text',this.value)"/>
+        <input class="ppt-dur" value="${escH(pt.duration||'')}" placeholder="süre" onchange="editPT('${cat.id}','${pt.id}','duration',this.value)"/>
+        <button class="ppt-assign" onclick="openAssign('${cat.id}','${pt.id}')">+ Güne Ekle</button>
+        <button class="ppt-del" onclick="deletePT('${cat.id}','${pt.id}')">✕</button>`;
       body.appendChild(row);
     });
 
     const addRow=document.createElement('div');
-    addRow.className='add-pool-task';
+    addRow.className='add-ppt';
     addRow.innerHTML=`
-      <input class="apt-in" placeholder="Görev ekle..." id="api-${cat.id}" onkeydown="if(event.key==='Enter')addPT('${cat.id}')"/>
-      <input class="apt-dur" placeholder="süre" id="apd-${cat.id}" onkeydown="if(event.key==='Enter')addPT('${cat.id}')"/>
-      <button class="apt-btn" onclick="addPT('${cat.id}')">＋</button>`;
+      <input class="add-ppt-in" placeholder="Görev ekle..." id="appi-${cat.id}" onkeydown="if(event.key==='Enter')addPT('${cat.id}')"/>
+      <input class="add-ppt-dur" placeholder="süre" id="appd-${cat.id}" onkeydown="if(event.key==='Enter')addPT('${cat.id}')"/>
+      <button class="add-ppt-btn" onclick="addPT('${cat.id}')">＋</button>`;
     body.appendChild(addRow);
   });
 }
-
-function renameCat(id,v){const c=data.pool.find(c=>c.id===id);if(c){c.name=v;save();}}
-function deleteCat(id){if(!confirm('Kategoriyi sil?'))return;data.pool=data.pool.filter(c=>c.id!==id);renderPool();save();}
+function renameCat(id,v){const c=data.pool.find(c=>c.id===id);if(c){c.name=v;save();if(currentPage==='plan')renderPoolPanel();}}
+function deleteCat(id){if(!confirm('Kategoriyi sil?'))return;data.pool=data.pool.filter(c=>c.id!==id);renderPoolPage();if(currentPage==='plan')renderPoolPanel();save();}
 function editPT(cid,tid,f,v){const c=data.pool.find(c=>c.id===cid);if(c){const t=c.tasks.find(t=>t.id===tid);if(t){t[f]=v;save();}}}
-function deletePT(cid,tid){const c=data.pool.find(c=>c.id===cid);if(c){c.tasks=c.tasks.filter(t=>t.id!==tid);renderPool();save();}}
+function deletePT(cid,tid){const c=data.pool.find(c=>c.id===cid);if(c){c.tasks=c.tasks.filter(t=>t.id!==tid);renderPoolPage();if(currentPage==='plan')renderPoolPanel();save();}}
 function addPT(cid){
-  const ti=document.getElementById('api-'+cid),di=document.getElementById('apd-'+cid);
+  const ti=document.getElementById('appi-'+cid),di=document.getElementById('appd-'+cid);
   const text=ti.value.trim();if(!text)return;
   const c=data.pool.find(c=>c.id===cid);
   c.tasks.push({id:'pt'+(++_pi),text,duration:di.value.trim()});
   ti.value='';di.value='';
-  renderPool();save();toast('Havuza eklendi ✓');
+  renderPoolPage();if(currentPage==='plan')renderPoolPanel();save();toast('Havuza eklendi ✓');
 }
 function addCategory(){
   const id='cat'+(++_ci);
-  data.pool.push({id,name:'Yeni Kategori',color:CAT_COLORS[(data.pool.length)%CAT_COLORS.length],tasks:[]});
-  renderPool();save();
+  data.pool.push({id,name:'Yeni Kategori',color:CAT_COLORS[data.pool.length%CAT_COLORS.length],tasks:[]});
+  renderPoolPage();if(currentPage==='plan')renderPoolPanel();save();
 }
 
 // assign modal
 function openAssign(cid,tid){
   const cat=data.pool.find(c=>c.id===cid);
-  const pt=cat.tasks.find(t=>t.id===tid);
+  const pt=cat?.tasks.find(t=>t.id===tid);
+  if(!pt)return;
   assignItem={cat,pt};
-  document.getElementById('assignDesc').textContent=`"${pt.text}" — hangi güne eklensin?`;
-  const list=document.getElementById('daySelectList');
-  list.innerHTML='';
-  if(!data.days.length){
-    list.innerHTML='<div class="empty">Plan sayfasından önce bir gün ekle.</div>';
-  } else {
-    data.days.forEach(day=>{
-      const row=document.createElement('div');row.className='dsl-item';
-      row.innerHTML=`<span>${escH(day.name)}</span><button class="dsl-btn" onclick="doAssign('${day.id}')">Ekle</button>`;
-      list.appendChild(row);
-    });
-  }
+  document.getElementById('assignDesc').textContent=`"${pt.text}" — hangi güne?`;
+  const list=document.getElementById('daySelectList');list.innerHTML='';
+  data.days.forEach(day=>{
+    const row=document.createElement('div');row.className='dsl-item';
+    row.innerHTML=`<span>${escH(day.name)}</span><button class="dsl-btn" onclick="doAssign('${day.id}')">Ekle</button>`;
+    list.appendChild(row);
+  });
   document.getElementById('assignModal').classList.add('open');
 }
 function doAssign(dayId){
@@ -531,9 +855,57 @@ function doAssign(dayId){
   const day=data.days.find(d=>d.id===dayId);
   day.tasks.push({id:'t'+(++_ti),text:assignItem.pt.text,duration:assignItem.pt.duration||'',done:false,color:assignItem.cat.color||COLORS[0]});
   save();closeAssign();toast(`"${assignItem.pt.text}" → ${day.name} ✓`);
+  if(currentPage==='plan')render();
 }
 function closeAssign(){document.getElementById('assignModal').classList.remove('open');assignItem=null;}
-document.getElementById('assignModal').addEventListener('click',function(e){if(e.target===this)closeAssign();});
+
+// ── NOTES PAGE ──
+function renderNotes(){
+  const grid=document.getElementById('notesGrid');
+  grid.innerHTML='';
+  const withNotes=data.days.filter(d=>d.note&&d.note.trim());
+  if(!withNotes.length){
+    grid.innerHTML='<div class="empty-notes"><div class="ei">📭</div>Henüz not yok.<br>Plan sayfasında her günün altına not ekleyebilirsin.</div>';
+    return;
+  }
+  withNotes.sort((a,b)=>nameToDate(b.name)-nameToDate(a.name)).forEach(day=>{
+    const card=document.createElement('div');
+    card.className='note-card';
+    card.innerHTML=`
+      <div class="note-card-hdr">
+        <span class="note-card-date" onclick="goToDay('${day.id}')" title="Güne git">${escH(day.name)}</span>
+      </div>
+      <div class="note-card-body">
+        <div class="note-text">${escH(day.note)}</div>
+        <button class="note-to-pool-btn" onclick="openNtp('${day.id}')">+ Havuza Ekle</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+function goToDay(id){data.activeDay=id;showPage('plan');render();}
+
+// note to pool modal
+function openNtp(dayId){
+  const day=data.days.find(d=>d.id===dayId);
+  if(!day)return;
+  ntpSourceNote=day;
+  document.getElementById('ntpText').value=day.note.split('\n')[0].slice(0,80);
+  document.getElementById('ntpDur').value='';
+  const sel=document.getElementById('ntpCat');
+  sel.innerHTML=data.pool.map(c=>`<option value="${c.id}">${escH(c.name)}</option>`).join('');
+  document.getElementById('ntpModal').classList.add('open');
+}
+function confirmNtp(){
+  const text=document.getElementById('ntpText').value.trim();
+  const dur=document.getElementById('ntpDur').value.trim();
+  const cid=document.getElementById('ntpCat').value;
+  if(!text)return;
+  const cat=data.pool.find(c=>c.id===cid);
+  if(!cat)return;
+  cat.tasks.push({id:'pt'+(++_pi),text,duration:dur});
+  save();closeNtp();toast(`"${text}" havuza eklendi ✓`);
+}
+function closeNtp(){document.getElementById('ntpModal').classList.remove('open');ntpSourceNote=null;}
 
 // ── CALENDAR ──
 function calNav(d){
@@ -553,75 +925,73 @@ function setCalView(v){
   renderCal();
 }
 
+function dayForDate(date){
+  const name=dateToName(date);
+  return data.days.find(d=>d.name===name)||null;
+}
+function getOrCreateDay(date){
+  const name=dateToName(date);
+  let day=data.days.find(d=>d.name===name);
+  if(!day){day={id:'d'+(++_di),name,tasks:[],note:''};data.days.push(day);data.days.sort((a,b)=>nameToDate(a.name)-nameToDate(b.name));}
+  return day;
+}
+
 function renderCal(){
   const [y,m]=data.calDate.split('-').map(Number);
   const body=document.getElementById('calBody');
-  const today=new Date();today.setHours(0,0,0,0);
+  const todayD=nowTR();todayD.setHours(0,0,0,0);
 
-  function makeDropHandlers(dateISO){
+  function dh(iso){
     return `ondragover="event.preventDefault();this.classList.add('dz-over')"
             ondragleave="this.classList.remove('dz-over')"
-            ondrop="this.classList.remove('dz-over');calDrop(event,'${dateISO}')"`;
+            ondrop="this.classList.remove('dz-over');calDrop(event,'${iso}')"`;
   }
 
   if(data.calView==='month'){
-    document.getElementById('calTitle').textContent=`${MONTHS_TR[m-1]} ${y}`;
-    const DOWS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+    document.getElementById('calTitle').textContent=`${MONTHS[m-1]} ${y}`;
     let html='<div class="cal-month">';
-    DOWS.forEach(d=>html+=`<div class="cal-dow">${d}</div>`);
+    DOWS_SHORT.forEach(d=>html+=`<div class="cal-dow">${d}</div>`);
     const first=new Date(y,m-1,1);
-    let startDow=first.getDay();startDow=startDow===0?6:startDow-1;
+    let sd=first.getDay();sd=sd===0?6:sd-1;
     for(let i=0;i<42;i++){
-      const date=new Date(y,m-1,1-startDow+i);
-      const isOther=date.getMonth()!==m-1;
-      const isTod=date.getTime()===today.getTime();
-      const planDay=dayForDate(date);
-      const tasks=planDay?planDay.tasks:[];
+      const date=new Date(y,m-1,1-sd+i);
       const iso=date.toISOString().slice(0,10);
-      html+=`<div class="cal-cell${isOther?' other-month':''}${isTod?' today-cell':''}${planDay?' has-day':''}"
-        onclick="calClick('${iso}')" ${makeDropHandlers(iso)}>
+      const isOther=date.getMonth()!==m-1;
+      const isTod=date.getTime()===todayD.getTime();
+      const pd=dayForDate(date);
+      const tasks=pd?pd.tasks:[];
+      html+=`<div class="cal-cell${isOther?' other-month':''}${isTod?' today-cell':''}${pd?' has-day':''}"
+        onclick="calClick('${iso}')" ${dh(iso)}>
         <div class="cell-num${isTod?' today-num':''}">${date.getDate()}</div>
         <div class="cell-tasks">`;
-      tasks.slice(0,2).forEach(t=>{
-        html+=`<div class="cell-pill" style="background:${t.color||COLORS[0]}">${escH(t.text)}</div>`;
-      });
-      if(tasks.length>2)html+=`<div class="cell-more">+${tasks.length-2} daha</div>`;
+      tasks.slice(0,2).forEach(t=>{html+=`<div class="cell-pill" style="background:${t.color||COLORS[0]}">${escH(t.text)}</div>`;});
+      if(tasks.length>2)html+=`<div class="cell-more">+${tasks.length-2}</div>`;
       html+=`</div></div>`;
     }
-    html+='</div>';
-    body.innerHTML=html;
+    html+='</div>';body.innerHTML=html;
   } else {
-    // weekly: find Monday of the week containing 1st of calDate month
     const first=new Date(y,m-1,1);
     let dow=first.getDay();dow=dow===0?6:dow-1;
-    const weekStart=new Date(first);weekStart.setDate(first.getDate()-dow);
-    const last=new Date(weekStart);last.setDate(weekStart.getDate()+6);
-    const DOWS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
-    const SMONTHS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+    const ws=new Date(first);ws.setDate(first.getDate()-dow);
+    const last=new Date(ws);last.setDate(ws.getDate()+6);
     document.getElementById('calTitle').textContent=
-      `${weekStart.getDate()} ${SMONTHS[weekStart.getMonth()]} – ${last.getDate()} ${SMONTHS[last.getMonth()]} ${y}`;
+      `${ws.getDate()} ${SMONTHS[ws.getMonth()]} – ${last.getDate()} ${SMONTHS[last.getMonth()]} ${y}`;
     let html='<div class="cal-week">';
     for(let i=0;i<7;i++){
-      const date=new Date(weekStart);date.setDate(weekStart.getDate()+i);
-      const isTod=date.getTime()===today.getTime();
-      const planDay=dayForDate(date);
-      const tasks=planDay?planDay.tasks:[];
+      const date=new Date(ws);date.setDate(ws.getDate()+i);
       const iso=date.toISOString().slice(0,10);
-      html+=`<div class="week-col${isTod?' today-col':''}${planDay?' has-day':''}"
-        onclick="calClick('${iso}')" ${makeDropHandlers(iso)}>
-        <div class="week-hdr">
-          <div class="week-dow">${DOWS[i]}</div>
-          <div class="week-num${isTod?' today-num':''}">${date.getDate()}</div>
-        </div>
+      const isTod=date.getTime()===todayD.getTime();
+      const pd=dayForDate(date);const tasks=pd?pd.tasks:[];
+      html+=`<div class="week-col${isTod?' today-col':''}${pd?' has-day':''}"
+        onclick="calClick('${iso}')" ${dh(iso)}>
+        <div class="week-hdr"><div class="week-dow">${DOWS_SHORT[i]}</div>
+        <div class="week-num${isTod?' today-num':''}">${date.getDate()}</div></div>
         <div class="week-tasks">`;
-      tasks.slice(0,5).forEach(t=>{
-        html+=`<div class="week-pill" style="background:${t.color||COLORS[0]}">${escH(t.text)}</div>`;
-      });
-      if(tasks.length>5)html+=`<div class="week-more">+${tasks.length-5} daha</div>`;
+      tasks.slice(0,5).forEach(t=>{html+=`<div class="week-pill" style="background:${t.color||COLORS[0]}">${escH(t.text)}</div>`;});
+      if(tasks.length>5)html+=`<div class="week-more">+${tasks.length-5}</div>`;
       html+=`</div></div>`;
     }
-    html+='</div>';
-    body.innerHTML=html;
+    html+='</div>';body.innerHTML=html;
   }
 }
 
@@ -632,18 +1002,16 @@ function calClick(iso){
   showPage('plan');render();
 }
 function calDrop(e,iso){
-  e.preventDefault();
-  if(!dragItem)return;
+  e.preventDefault();if(!dragItem)return;
   const date=new Date(iso+'T12:00:00');
   const day=getOrCreateDay(date);
   day.tasks.push({id:'t'+(++_ti),text:dragItem.text,duration:dragItem.duration||'',done:false,color:dragItem.color||COLORS[0]});
-  dragItem=null;save();renderCal();toast('Görev tarihe eklendi ✓');
+  dragItem=null;save();renderCal();toast('Görev eklendi ✓');
 }
 
-// ── MAIN ──
-function render(){renderPlan();save();}
-
-load();render();
+// ── INIT ──
+load();
+render();
 </script>
 </body>
 </html>
