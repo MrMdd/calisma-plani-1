@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Çalışma Planı</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0d;--surface:#141414;--surface2:#1c1c1c;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --chalk:#ede9e0;--dim:#888078;--dim2:#555;
+  --y:#f5c842;--g:#6ecfa8;--r:#e8725d;--b:#5aade0;--p:#a98fe0;--o:#e0a05a;
+}
+html{font-size:14px}
+body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--chalk);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 32px,rgba(255,255,255,0.025) 32px,rgba(255,255,255,0.025) 33px);pointer-events:none;z-index:0}
+
+.topnav{display:flex;align-items:center;border-bottom:1px solid var(--border);background:rgba(14,14,14,0.95);position:sticky;top:0;z-index:40;backdrop-filter:blur(8px)}
+.nav-logo{font-family:'Caveat',cursive;font-size:1.3rem;font-weight:700;padding:0 20px;color:var(--chalk);white-space:nowrap;border-right:1px solid var(--border);line-height:48px}
+.nav-tabs{display:flex;flex:1}
+.nav-tab{background:none;border:none;border-right:1px solid var(--border);color:var(--dim);font-family:'DM Mono',monospace;font-size:0.72rem;padding:0 22px;height:48px;cursor:pointer;letter-spacing:0.06em;transition:color .15s,background .15s;white-space:nowrap}
+.nav-tab:hover{color:var(--chalk);background:rgba(255,255,255,0.03)}
+.nav-tab.active{color:var(--y);border-bottom:2px solid var(--y);background:rgba(245,200,66,0.04)}
+
+.page{display:none;padding:28px 24px 80px;max-width:920px;margin:0 auto;position:relative;z-index:1;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+.section-title{font-family:'Caveat',cursive;font-size:1.5rem;font-weight:700;margin-bottom:20px;color:var(--chalk)}
+input,textarea{font-family:'DM Mono',monospace;color:var(--chalk)}
+button{cursor:pointer}
+
+/* ─ DAY STRIP ─ */
+.day-strip-wrap{display:flex;align-items:center;gap:7px;margin-bottom:22px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.day-strip-wrap::-webkit-scrollbar{display:none}
+.day-chip{flex-shrink:0;background:none;border:1px solid var(--border2);border-radius:8px;color:var(--dim);font-family:'DM Mono',monospace;font-size:0.7rem;padding:6px 15px;transition:all .15s;white-space:nowrap;letter-spacing:.03em}
+.day-chip:hover{border-color:rgba(255,255,255,.3);color:var(--chalk)}
+.day-chip.active{background:var(--y);border-color:var(--y);color:#111;font-weight:500}
+.day-chip.is-today{border-color:var(--g);color:var(--g)}
+.day-chip.is-today.active{background:var(--g);border-color:var(--g);color:#111}
+.add-day-chip{flex-shrink:0;background:none;border:1px dashed rgba(255,255,255,.18);border-radius:8px;color:var(--dim);font-size:1rem;padding:4px 13px;transition:all .15s}
+.add-day-chip:hover{border-color:var(--y);color:var(--y)}
+
+/* ─ DAY VIEW ─ */
+.day-hdr{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.day-name-input{font-family:'Caveat',cursive;font-size:1.55rem;font-weight:700;background:none;border:none;border-bottom:2px solid transparent;outline:none;color:var(--chalk);padding-bottom:2px;transition:border-color .15s;width:auto;min-width:80px}
+.day-name-input:focus{border-bottom-color:var(--y)}
+.day-stats{margin-left:auto;text-align:right;flex-shrink:0}
+.day-stats .tot{font-size:.7rem;color:var(--y);letter-spacing:.05em}
+.day-stats .cnt{font-size:.64rem;color:var(--dim);margin-top:2px}
+
+.prog-bar{height:2px;background:rgba(255,255,255,.06);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--g),var(--y));border-radius:2px;transition:width .4s ease}
+
+.task-list{display:flex;flex-direction:column;gap:8px;min-height:50px}
+.task-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;display:flex;align-items:flex-start;gap:10px;position:relative;overflow:hidden;transition:background .15s,border-color .15s}
+.task-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:10px 0 0 10px;background:var(--stripe,rgba(255,255,255,.2))}
+.task-card:hover{background:#222;border-color:var(--border2)}
+.task-card.done{opacity:.45}
+.task-card.done .t-text{text-decoration:line-through}
+
+.chk{width:16px;height:16px;border:2px solid rgba(255,255,255,.22);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.68rem;margin-top:2px;transition:all .15s}
+.task-card.done .chk{background:var(--g);border-color:var(--g);color:#111}
+
+.t-body{flex:1;min-width:0}
+.t-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.t-text{font-family:'Caveat',cursive;font-size:1.08rem;font-weight:600;background:none;border:none;outline:none;color:var(--chalk);flex:1;min-width:60px;padding:0}
+.t-text:focus{border-bottom:1px solid rgba(255,255,255,.18)}
+.t-dur{font-size:.66rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;color:var(--dim);padding:2px 7px;width:78px;text-align:center;outline:none;transition:border-color .15s}
+.t-dur:focus{border-color:var(--y);color:var(--chalk)}
+.t-dur::placeholder{color:rgba(255,255,255,.18)}
+.t-dots{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.cdot{width:9px;height:9px;border-radius:50%;border:1.5px solid transparent;transition:all .12s}
+.cdot:hover,.cdot.sel{border-color:#fff;transform:scale(1.3)}
+
+.t-acts{display:flex;gap:2px;opacity:0;transition:opacity .15s;flex-shrink:0}
+.task-card:hover .t-acts{opacity:1}
+.ib{background:none;border:none;color:var(--dim);padding:4px;border-radius:4px;font-size:.75rem;transition:color .12s,background .12s;line-height:1}
+.ib:hover{color:var(--r);background:rgba(255,255,255,.05)}
+
+.drop-zone{border:1.5px dashed rgba(245,200,66,.25);border-radius:10px;padding:12px;text-align:center;font-size:.68rem;color:rgba(245,200,66,.45);letter-spacing:.05em;margin-top:8px;transition:all .2s}
+.drop-zone.dz-active{border-color:var(--y);color:var(--y);background:rgba(245,200,66,.04)}
+
+.add-bar{display:flex;gap:8px;align-items:center;padding:10px 13px;border:1px dashed rgba(255,255,255,.13);border-radius:10px;margin-top:8px;transition:border-color .15s}
+.add-bar:focus-within{border-style:solid;border-color:var(--y)}
+.add-bar:hover{border-color:rgba(255,255,255,.26)}
+.add-ti{flex:1;font-family:'Caveat',cursive;font-size:1.02rem;background:none;border:none;outline:none;color:var(--chalk)}
+.add-ti::placeholder{color:rgba(255,255,255,.2)}
+.add-di{font-size:.66rem;background:none;border:1px solid rgba(255,255,255,.1);border-radius:4px;color:var(--dim);padding:2px 7px;width:74px;text-align:center;outline:none}
+.add-di:focus{border-color:var(--y)}
+.add-di::placeholder{color:rgba(255,255,255,.18)}
+.add-btn{background:var(--y);border:none;border-radius:6px;color:#111;font-family:'DM Mono',monospace;font-size:.68rem;font-weight:500;padding:6px 14px;letter-spacing:.03em;transition:opacity .15s}
+.add-btn:hover{opacity:.82}
+
+/* ─ POOL PAGE ─ */
+.pool-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:580px){.pool-grid{grid-template-columns:1fr}}
+.pool-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;position:relative}
+.pool-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--stripe,#fff)}
+.pool-card-hdr{padding:13px 14px 9px 20px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+.pc-title{font-family:'Caveat',cursive;font-size:1.12rem;font-weight:700;flex:1;background:none;border:none;outline:none;color:var(--chalk)}
+.pc-title:focus{border-bottom:1px solid rgba(255,255,255,.2)}
+.pool-card-body{padding:10px 14px 12px 20px;display:flex;flex-direction:column;gap:5px}
+.pool-task{display:flex;align-items:center;gap:7px;padding:6px 9px;background:rgba(255,255,255,.03);border:1px solid transparent;border-radius:7px;transition:all .15s;cursor:grab}
+.pool-task:hover{background:rgba(255,255,255,.07);border-color:var(--border2)}
+.pool-task.dragging{opacity:.35;cursor:grabbing}
+.pt-drag{color:var(--dim2);font-size:.85rem;flex-shrink:0;user-select:none}
+.pt-text{font-family:'Caveat',cursive;font-size:.98rem;font-weight:600;flex:1;background:none;border:none;outline:none;color:var(--chalk)}
+.pt-text:focus{border-bottom:1px solid rgba(255,255,255,.18)}
+.pt-dur{font-size:.64rem;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:3px;color:var(--dim);padding:1px 6px;width:68px;text-align:center;outline:none}
+.pt-dur:focus{border-color:var(--y);color:var(--chalk)}
+.pt-dur::placeholder{color:rgba(255,255,255,.18)}
+.pt-assign{background:none;border:1px solid rgba(255,255,255,.12);border-radius:5px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.62rem;padding:2px 8px;transition:all .15s;white-space:nowrap}
+.pt-assign:hover{border-color:var(--y);color:var(--y)}
+.pt-del{background:none;border:none;color:var(--dim2);font-size:.72rem;padding:3px;border-radius:3px;transition:color .12s;opacity:0;flex-shrink:0}
+.pool-task:hover .pt-del{opacity:1}
+.pt-del:hover{color:var(--r)}
+.add-pool-task{display:flex;gap:7px;align-items:center;padding:6px 9px;border:1px dashed rgba(255,255,255,.12);border-radius:7px;margin-top:2px;transition:border-color .15s}
+.add-pool-task:focus-within{border-style:solid;border-color:var(--y)}
+.apt-in{flex:1;font-family:'Caveat',cursive;font-size:.93rem;background:none;border:none;outline:none;color:var(--chalk)}
+.apt-in::placeholder{color:rgba(255,255,255,.18)}
+.apt-dur{font-size:.62rem;background:none;border:1px solid rgba(255,255,255,.08);border-radius:3px;color:var(--dim);padding:1px 6px;width:62px;text-align:center;outline:none}
+.apt-dur::placeholder{color:rgba(255,255,255,.18)}
+.apt-btn{background:none;border:none;color:var(--dim);font-size:.95rem;padding:0 3px;transition:color .15s}
+.apt-btn:hover{color:var(--y)}
+.add-pool-cat{background:none;border:1px dashed rgba(255,255,255,.14);border-radius:12px;width:100%;padding:14px;font-family:'Caveat',cursive;font-size:.98rem;color:var(--dim);letter-spacing:.04em;transition:all .15s;margin-top:2px}
+.add-pool-cat:hover{border-color:var(--y);color:var(--y)}
+
+/* ─ CALENDAR ─ */
+.cal-controls{display:flex;align-items:center;gap:10px;margin-bottom:22px}
+.cal-nav{background:none;border:1px solid var(--border2);border-radius:7px;color:var(--chalk);font-size:.9rem;padding:6px 14px;transition:all .15s}
+.cal-nav:hover{border-color:var(--y);color:var(--y)}
+.cal-title{font-family:'Caveat',cursive;font-size:1.35rem;font-weight:700;flex:1;text-align:center}
+.cal-view-toggle{display:flex;border:1px solid var(--border2);border-radius:8px;overflow:hidden}
+.cvt{background:none;border:none;color:var(--dim);font-family:'DM Mono',monospace;font-size:.68rem;padding:7px 15px;letter-spacing:.04em;transition:all .15s}
+.cvt.active{background:var(--y);color:#111;font-weight:500}
+
+.cal-month{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-dow{text-align:center;font-size:.62rem;color:var(--dim);letter-spacing:.06em;padding:6px 0;text-transform:uppercase}
+.cal-cell{background:var(--surface);border:1px solid var(--border);border-radius:8px;min-height:78px;padding:6px;cursor:pointer;transition:border-color .15s,background .15s}
+.cal-cell:hover{border-color:var(--border2);background:rgba(255,255,255,.02)}
+.cal-cell.other-month{opacity:.28}
+.cal-cell.today-cell{border-color:var(--g)}
+.cal-cell.has-day{border-color:rgba(245,200,66,.35)}
+.cal-cell.dz-over{border-color:var(--y);background:rgba(245,200,66,.07)}
+.cell-num{font-size:.68rem;color:var(--dim);margin-bottom:4px}
+.cell-num.today-num{color:var(--g);font-weight:500}
+.cell-tasks{display:flex;flex-direction:column;gap:2px}
+.cell-pill{font-size:.58rem;border-radius:3px;padding:1px 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#111;font-weight:500}
+.cell-more{font-size:.56rem;color:var(--dim);margin-top:1px}
+
+.cal-week{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.week-col{background:var(--surface);border:1px solid var(--border);border-radius:10px;min-height:180px;overflow:hidden;cursor:pointer;transition:border-color .15s,background .15s}
+.week-col:hover{border-color:var(--border2)}
+.week-col.today-col{border-color:var(--g)}
+.week-col.has-day{border-color:rgba(245,200,66,.35)}
+.week-col.dz-over{border-color:var(--y);background:rgba(245,200,66,.06)}
+.week-hdr{padding:8px;border-bottom:1px solid var(--border);text-align:center}
+.week-dow{font-size:.6rem;color:var(--dim);letter-spacing:.05em;text-transform:uppercase}
+.week-num{font-family:'Caveat',cursive;font-size:1.2rem;font-weight:700}
+.week-num.today-num{color:var(--g)}
+.week-tasks{padding:6px;display:flex;flex-direction:column;gap:3px}
+.week-pill{font-size:.6rem;border-radius:4px;padding:3px 6px;color:#111;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.week-more{font-size:.57rem;color:var(--dim);padding:0 6px 4px}
+
+/* ─ MODAL ─ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:60;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#181818;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:24px 22px;width:100%;max-width:380px;transform:translateY(8px);transition:transform .2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal h2{font-family:'Caveat',cursive;font-size:1.4rem;margin-bottom:6px}
+.modal p{font-size:.73rem;color:var(--dim);margin-bottom:14px;letter-spacing:.03em}
+.day-select-list{display:flex;flex-direction:column;gap:6px;max-height:230px;overflow-y:auto;margin-bottom:14px;padding-right:4px}
+.dsl-item{display:flex;align-items:center;justify-content:space-between;padding:9px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;font-size:.76rem;transition:all .15s}
+.dsl-item:hover{border-color:var(--y);background:rgba(245,200,66,.05)}
+.dsl-btn{background:var(--y);border:none;border-radius:5px;color:#111;font-family:'DM Mono',monospace;font-size:.66rem;padding:4px 12px;font-weight:500}
+.modal-close{background:none;border:1px solid var(--border2);border-radius:7px;color:var(--dim);font-family:'DM Mono',monospace;font-size:.72rem;padding:8px 18px;float:right}
+.modal-close:hover{color:var(--chalk)}
+
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(14px);background:#1e1e1e;border:1px solid rgba(255,255,255,.12);color:var(--chalk);font-size:.73rem;padding:10px 20px;border-radius:8px;opacity:0;transition:opacity .22s,transform .22s;pointer-events:none;z-index:100;letter-spacing:.03em;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+.empty{text-align:center;padding:32px 20px;color:var(--dim);font-size:.76rem;letter-spacing:.04em}
+.empty .ei{font-size:1.7rem;margin-bottom:8px}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-logo">📋 Planım</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('plan')">Günlük Plan</button>
+    <button class="nav-tab" onclick="showPage('pool')">Görev Havuzu</button>
+    <button class="nav-tab" onclick="showPage('calendar')">Takvim</button>
+  </div>
+</nav>
+
+<div class="page active" id="page-plan">
+  <div class="day-strip-wrap" id="dayStrip"></div>
+  <div id="dayView"></div>
+</div>
+
+<div class="page" id="page-pool">
+  <div class="section-title">Görev Havuzu</div>
+  <p style="font-size:.72rem;color:var(--dim);margin-bottom:18px;letter-spacing:.03em">Görevleri buraya ekle, sonra güne sürükle veya "Güne Ekle" ile ata.</p>
+  <div class="pool-grid" id="poolGrid"></div>
+  <button class="add-pool-cat" onclick="addCategory()">+ Yeni Kategori Ekle</button>
+</div>
+
+<div class="page" id="page-calendar">
+  <div class="cal-controls">
+    <button class="cal-nav" onclick="calNav(-1)">←</button>
+    <div class="cal-title" id="calTitle"></div>
+    <button class="cal-nav" onclick="calNav(1)">→</button>
+    <div class="cal-view-toggle">
+      <button class="cvt active" onclick="setCalView('month')">Aylık</button>
+      <button class="cvt" onclick="setCalView('week')">Haftalık</button>
+    </div>
+  </div>
+  <div id="calBody"></div>
+</div>
+
+<div class="modal-overlay" id="assignModal">
+  <div class="modal">
+    <h2>Güne Ekle</h2>
+    <p id="assignDesc"></p>
+    <div class="day-select-list" id="daySelectList"></div>
+    <button class="modal-close" onclick="closeAssign()">Kapat</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS=['#f5c842','#6ecfa8','#e8725d','#5aade0','#a98fe0','#e0a05a','#a0d96c','#e05a9b'];
+const CAT_COLORS=['#f5c842','#6ecfa8','#e8725d','#5aade0','#a98fe0','#e0a05a'];
+const MONTHS_TR=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+let data={
+  days:[{id:'d1',name:'1 Mayıs 2026',tasks:[
+    {id:'t1',text:'TYT TR+SOS Deneme',duration:'1,5 saat',done:false,color:'#f5c842'},
+    {id:'t2',text:'AYT 2024 Çıkmış',duration:'3 saat',done:false,color:'#6ecfa8'},
+    {id:'t3',text:'1 AYT Mat. Deneme',duration:'2 saat',done:false,color:'#a98fe0'},
+    {id:'t4',text:'Bağışıklık MEB Tekrarları (Biyoloji)',duration:'45 dk',done:false,color:'#5aade0'},
+    {id:'t5',text:'3 Barış PROB Denemesi',duration:'1 saat',done:false,color:'#e8725d'},
+    {id:'t6',text:'3 Eyüp B Türev 1. Soru Yorumu',duration:'1 saat',done:false,color:'#e0a05a'},
+  ]}],
+  pool:[
+    {id:'cat1',name:'TYT',color:'#f5c842',tasks:[
+      {id:'pt1',text:'TYT Matematik Denemesi',duration:'2 saat'},
+      {id:'pt2',text:'TYT Türkçe Tekrar',duration:'1 saat'},
+    ]},
+    {id:'cat2',name:'AYT',color:'#6ecfa8',tasks:[
+      {id:'pt3',text:'AYT Fizik Soru Çözümü',duration:'1,5 saat'},
+      {id:'pt4',text:'AYT Kimya Deneme',duration:'2 saat'},
+    ]},
+  ],
+  activeDay:'d1',
+  calView:'month',
+  calDate:''
+};
+
+let _di=2,_ti=20,_ci=3,_pi=10;
+let dragItem=null,assignItem=null;
+
+function save(){try{localStorage.setItem('planV3',JSON.stringify(data))}catch(e){}}
+function load(){
+  try{
+    const s=localStorage.getItem('planV3');
+    if(s){
+      data=JSON.parse(s);
+      _di=Math.max(...data.days.map(d=>parseInt(d.id.slice(1))||0),2)+1;
+    }
+  }catch(e){}
+  const now=new Date();
+  data.calDate=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+}
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+// ── PAGES ──
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  ['plan','pool','calendar'].forEach((n,i)=>{
+    if(n===p)document.querySelectorAll('.nav-tab')[i].classList.add('active');
+  });
+  if(p==='calendar')renderCal();
+  if(p==='pool')renderPool();
+}
+
+// ── UTILS ──
+function parseDur(s){
+  if(!s)return 0;let m=0;
+  const h=s.match(/(\d+[,.]?\d*)\s*saat/i);
+  const d=s.match(/(\d+)\s*dk/i);
+  if(h)m+=parseFloat(h[1].replace(',','.'))*60;
+  if(d)m+=parseInt(d[1]);
+  return m;
+}
+function fmtTotal(m){
+  if(!m)return'—';
+  const h=Math.floor(m/60),r=m%60;
+  if(h&&r)return`${h}s ${r}dk`;if(h)return`${h} saat`;return`${r} dk`;
+}
+function isToday(name){
+  const n=new Date();
+  return name===`${n.getDate()} ${MONTHS_TR[n.getMonth()]} ${n.getFullYear()}`;
+}
+function nextDayName(name){
+  const m=name.match(/(\d+)\s*(Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık)\s*(\d{4})/i);
+  if(m){
+    const mo=MONTHS_TR.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());
+    const d=new Date(parseInt(m[3]),mo,parseInt(m[1])+1);
+    return`${d.getDate()} ${MONTHS_TR[d.getMonth()]} ${d.getFullYear()}`;
+  }
+  return'Yeni Gün';
+}
+function getActiveDay(){return data.days.find(d=>d.id===data.activeDay)}
+function dayForDate(date){
+  const name=`${date.getDate()} ${MONTHS_TR[date.getMonth()]} ${date.getFullYear()}`;
+  return data.days.find(d=>d.name===name)||null;
+}
+function getOrCreateDay(date){
+  const name=`${date.getDate()} ${MONTHS_TR[date.getMonth()]} ${date.getFullYear()}`;
+  let day=data.days.find(d=>d.name===name);
+  if(!day){day={id:'d'+(++_di),name,tasks:[]};data.days.push(day);}
+  return day;
+}
+
+// ── PLAN ──
+function renderPlan(){renderStrip();renderDayView();}
+
+function renderStrip(){
+  const strip=document.getElementById('dayStrip');
+  strip.innerHTML='';
+  data.days.forEach(day=>{
+    const btn=document.createElement('button');
+    btn.className='day-chip'
+      +(day.id===data.activeDay?' active':'')
+      +(isToday(day.name)?' is-today':'');
+    btn.textContent=day.name;
+    btn.onclick=()=>{data.activeDay=day.id;render();};
+    strip.appendChild(btn);
+  });
+  const add=document.createElement('button');
+  add.className='add-day-chip';add.textContent='+';add.title='Sonraki günü ekle';
+  add.onclick=addNextDay;
+  strip.appendChild(add);
+}
+
+function addNextDay(){
+  const last=data.days[data.days.length-1];
+  const name=last?nextDayName(last.name):'Yeni Gün';
+  const id='d'+(++_di);
+  data.days.push({id,name,tasks:[]});
+  data.activeDay=id;
+  render();
+  toast('📅 '+name+' eklendi');
+}
+
+function renderDayView(){
+  const day=getActiveDay();
+  const view=document.getElementById('dayView');
+  if(!day){view.innerHTML='<div class="empty"><div class="ei">📭</div>Gün bulunamadı.</div>';return;}
+
+  const totalM=day.tasks.reduce((a,t)=>a+parseDur(t.duration),0);
+  const doneM=day.tasks.filter(t=>t.done).reduce((a,t)=>a+parseDur(t.duration),0);
+  const pct=totalM?Math.round(doneM/totalM*100):0;
+  const doneN=day.tasks.filter(t=>t.done).length;
+
+  view.innerHTML=`
+    <div class="day-hdr">
+      <input class="day-name-input" value="${escH(day.name)}" onchange="renameDay('${day.id}',this.value)" style="width:${Math.max(160,day.name.length*11)}px"/>
+      <div class="day-stats">
+        <div class="tot">⏱ ${fmtTotal(totalM)}</div>
+        <div class="cnt">${doneN}/${day.tasks.length} tamamlandı · %${pct}</div>
+      </div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+    <div class="task-list" id="taskList"></div>
+    <div class="drop-zone" id="dz"
+      ondragover="event.preventDefault();document.getElementById('dz').classList.add('dz-active')"
+      ondragleave="document.getElementById('dz').classList.remove('dz-active')"
+      ondrop="dropOnDay(event,'${day.id}')">
+      ↓ Havuzdan görev buraya sürükle
+    </div>
+    <div class="add-bar">
+      <span style="color:var(--dim)">→</span>
+      <input class="add-ti" id="addTI" placeholder="Yeni görev ekle..." onkeydown="if(event.key==='Enter')addTask()"/>
+      <input class="add-di" id="addDI" placeholder="süre" onkeydown="if(event.key==='Enter')addTask()"/>
+      <button class="add-btn" onclick="addTask()">Ekle</button>
+    </div>`;
+
+  const list=document.getElementById('taskList');
+  if(!day.tasks.length){
+    list.innerHTML='<div class="empty"><div class="ei">📭</div>Henüz görev yok. Aşağıdan ekle veya havuzdan sürükle.</div>';
+    return;
+  }
+  day.tasks.forEach(task=>{
+    const c=document.createElement('div');
+    c.className='task-card'+(task.done?' done':'');
+    c.style.setProperty('--stripe',task.color||COLORS[0]);
+    c.innerHTML=`
+      <div class="chk" onclick="toggleDone('${task.id}')">${task.done?'✓':''}</div>
+      <div class="t-body">
+        <div class="t-row">
+          <input class="t-text" value="${escH(task.text)}" onchange="editTask('${task.id}','text',this.value)"/>
+          <input class="t-dur" value="${escH(task.duration)}" placeholder="süre" onchange="editTask('${task.id}','duration',this.value)"/>
+        </div>
+        <div class="t-dots">${COLORS.map(col=>`<span class="cdot${task.color===col?' sel':''}" style="background:${col}" onclick="editTask('${task.id}','color','${col}')"></span>`).join('')}</div>
+      </div>
+      <div class="t-acts"><button class="ib" onclick="deleteTask('${task.id}')">✕</button></div>`;
+    list.appendChild(c);
+  });
+}
+
+function escH(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function toggleDone(id){const d=getActiveDay();const t=d.tasks.find(t=>t.id===id);if(t){t.done=!t.done;render();}}
+function editTask(id,f,v){const d=getActiveDay();const t=d.tasks.find(t=>t.id===id);if(t){t[f]=v;save();}}
+function deleteTask(id){const d=getActiveDay();d.tasks=d.tasks.filter(t=>t.id!==id);render();toast('Görev silindi');}
+function renameDay(id,v){const d=data.days.find(d=>d.id===id);if(d){d.name=v;renderStrip();save();}}
+function addTask(){
+  const ti=document.getElementById('addTI'),di=document.getElementById('addDI');
+  const text=ti.value.trim();if(!text)return;
+  const day=getActiveDay();
+  day.tasks.push({id:'t'+(++_ti),text,duration:di.value.trim(),done:false,color:COLORS[day.tasks.length%COLORS.length]});
+  ti.value='';di.value='';
+  render();toast('Görev eklendi ✓');
+}
+function dropOnDay(e,dayId){
+  e.preventDefault();
+  document.getElementById('dz').classList.remove('dz-active');
+  if(!dragItem)return;
+  const day=data.days.find(d=>d.id===dayId);
+  if(!day)return;
+  day.tasks.push({id:'t'+(++_ti),text:dragItem.text,duration:dragItem.duration||'',done:false,color:dragItem.color||COLORS[0]});
+  dragItem=null;render();toast('Görev güne eklendi ✓');
+}
+
+// ── POOL ──
+function renderPool(){
+  const grid=document.getElementById('poolGrid');
+  grid.innerHTML='';
+  data.pool.forEach(cat=>{
+    const card=document.createElement('div');
+    card.className='pool-card';
+    card.style.setProperty('--stripe',cat.color||CAT_COLORS[0]);
+    card.innerHTML=`
+      <div class="pool-card-hdr">
+        <input class="pc-title" value="${escH(cat.name)}" onchange="renameCat('${cat.id}',this.value)"/>
+        <button class="ib" onclick="deleteCat('${cat.id}')" style="opacity:.5">✕</button>
+      </div>
+      <div class="pool-card-body" id="pb-${cat.id}"></div>`;
+    grid.appendChild(card);
+
+    const body=document.getElementById('pb-'+cat.id);
+    cat.tasks.forEach(pt=>{
+      const row=document.createElement('div');
+      row.className='pool-task';row.draggable=true;
+      row.addEventListener('dragstart',e=>{
+        dragItem={text:pt.text,duration:pt.duration,color:cat.color};
+        row.classList.add('dragging');
+      });
+      row.addEventListener('dragend',()=>{row.classList.remove('dragging');});
+      row.innerHTML=`
+        <span class="pt-drag">⠿</span>
+        <input class="pt-text" value="${escH(pt.text)}" onchange="editPT('${cat.id}','${pt.id}','text',this.value)"/>
+        <input class="pt-dur" value="${escH(pt.duration||'')}" placeholder="süre" onchange="editPT('${cat.id}','${pt.id}','duration',this.value)"/>
+        <button class="pt-assign" onclick="openAssign('${cat.id}','${pt.id}')">+ Güne Ekle</button>
+        <button class="pt-del" onclick="deletePT('${cat.id}','${pt.id}')">✕</button>`;
+      body.appendChild(row);
+    });
+
+    const addRow=document.createElement('div');
+    addRow.className='add-pool-task';
+    addRow.innerHTML=`
+      <input class="apt-in" placeholder="Görev ekle..." id="api-${cat.id}" onkeydown="if(event.key==='Enter')addPT('${cat.id}')"/>
+      <input class="apt-dur" placeholder="süre" id="apd-${cat.id}" onkeydown="if(event.key==='Enter')addPT('${cat.id}')"/>
+      <button class="apt-btn" onclick="addPT('${cat.id}')">＋</button>`;
+    body.appendChild(addRow);
+  });
+}
+
+function renameCat(id,v){const c=data.pool.find(c=>c.id===id);if(c){c.name=v;save();}}
+function deleteCat(id){if(!confirm('Kategoriyi sil?'))return;data.pool=data.pool.filter(c=>c.id!==id);renderPool();save();}
+function editPT(cid,tid,f,v){const c=data.pool.find(c=>c.id===cid);if(c){const t=c.tasks.find(t=>t.id===tid);if(t){t[f]=v;save();}}}
+function deletePT(cid,tid){const c=data.pool.find(c=>c.id===cid);if(c){c.tasks=c.tasks.filter(t=>t.id!==tid);renderPool();save();}}
+function addPT(cid){
+  const ti=document.getElementById('api-'+cid),di=document.getElementById('apd-'+cid);
+  const text=ti.value.trim();if(!text)return;
+  const c=data.pool.find(c=>c.id===cid);
+  c.tasks.push({id:'pt'+(++_pi),text,duration:di.value.trim()});
+  ti.value='';di.value='';
+  renderPool();save();toast('Havuza eklendi ✓');
+}
+function addCategory(){
+  const id='cat'+(++_ci);
+  data.pool.push({id,name:'Yeni Kategori',color:CAT_COLORS[(data.pool.length)%CAT_COLORS.length],tasks:[]});
+  renderPool();save();
+}
+
+// assign modal
+function openAssign(cid,tid){
+  const cat=data.pool.find(c=>c.id===cid);
+  const pt=cat.tasks.find(t=>t.id===tid);
+  assignItem={cat,pt};
+  document.getElementById('assignDesc').textContent=`"${pt.text}" — hangi güne eklensin?`;
+  const list=document.getElementById('daySelectList');
+  list.innerHTML='';
+  if(!data.days.length){
+    list.innerHTML='<div class="empty">Plan sayfasından önce bir gün ekle.</div>';
+  } else {
+    data.days.forEach(day=>{
+      const row=document.createElement('div');row.className='dsl-item';
+      row.innerHTML=`<span>${escH(day.name)}</span><button class="dsl-btn" onclick="doAssign('${day.id}')">Ekle</button>`;
+      list.appendChild(row);
+    });
+  }
+  document.getElementById('assignModal').classList.add('open');
+}
+function doAssign(dayId){
+  if(!assignItem)return;
+  const day=data.days.find(d=>d.id===dayId);
+  day.tasks.push({id:'t'+(++_ti),text:assignItem.pt.text,duration:assignItem.pt.duration||'',done:false,color:assignItem.cat.color||COLORS[0]});
+  save();closeAssign();toast(`"${assignItem.pt.text}" → ${day.name} ✓`);
+}
+function closeAssign(){document.getElementById('assignModal').classList.remove('open');assignItem=null;}
+document.getElementById('assignModal').addEventListener('click',function(e){if(e.target===this)closeAssign();});
+
+// ── CALENDAR ──
+function calNav(d){
+  const [y,m]=data.calDate.split('-').map(Number);
+  let ny=y,nm=m;
+  if(data.calView==='month'){nm+=d;if(nm>12){nm=1;ny++;}if(nm<1){nm=12;ny--;}}
+  else{
+    const cur=new Date(y,m-1,1);cur.setDate(cur.getDate()+d*7);
+    ny=cur.getFullYear();nm=cur.getMonth()+1;
+  }
+  data.calDate=`${ny}-${String(nm).padStart(2,'0')}`;
+  renderCal();
+}
+function setCalView(v){
+  data.calView=v;
+  document.querySelectorAll('.cvt').forEach((b,i)=>b.classList.toggle('active',['month','week'][i]===v));
+  renderCal();
+}
+
+function renderCal(){
+  const [y,m]=data.calDate.split('-').map(Number);
+  const body=document.getElementById('calBody');
+  const today=new Date();today.setHours(0,0,0,0);
+
+  function makeDropHandlers(dateISO){
+    return `ondragover="event.preventDefault();this.classList.add('dz-over')"
+            ondragleave="this.classList.remove('dz-over')"
+            ondrop="this.classList.remove('dz-over');calDrop(event,'${dateISO}')"`;
+  }
+
+  if(data.calView==='month'){
+    document.getElementById('calTitle').textContent=`${MONTHS_TR[m-1]} ${y}`;
+    const DOWS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+    let html='<div class="cal-month">';
+    DOWS.forEach(d=>html+=`<div class="cal-dow">${d}</div>`);
+    const first=new Date(y,m-1,1);
+    let startDow=first.getDay();startDow=startDow===0?6:startDow-1;
+    for(let i=0;i<42;i++){
+      const date=new Date(y,m-1,1-startDow+i);
+      const isOther=date.getMonth()!==m-1;
+      const isTod=date.getTime()===today.getTime();
+      const planDay=dayForDate(date);
+      const tasks=planDay?planDay.tasks:[];
+      const iso=date.toISOString().slice(0,10);
+      html+=`<div class="cal-cell${isOther?' other-month':''}${isTod?' today-cell':''}${planDay?' has-day':''}"
+        onclick="calClick('${iso}')" ${makeDropHandlers(iso)}>
+        <div class="cell-num${isTod?' today-num':''}">${date.getDate()}</div>
+        <div class="cell-tasks">`;
+      tasks.slice(0,2).forEach(t=>{
+        html+=`<div class="cell-pill" style="background:${t.color||COLORS[0]}">${escH(t.text)}</div>`;
+      });
+      if(tasks.length>2)html+=`<div class="cell-more">+${tasks.length-2} daha</div>`;
+      html+=`</div></div>`;
+    }
+    html+='</div>';
+    body.innerHTML=html;
+  } else {
+    // weekly: find Monday of the week containing 1st of calDate month
+    const first=new Date(y,m-1,1);
+    let dow=first.getDay();dow=dow===0?6:dow-1;
+    const weekStart=new Date(first);weekStart.setDate(first.getDate()-dow);
+    const last=new Date(weekStart);last.setDate(weekStart.getDate()+6);
+    const DOWS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+    const SMONTHS=['Oca','Şub','Mar','Nis','May','Haz','Tem','Ağu','Eyl','Eki','Kas','Ara'];
+    document.getElementById('calTitle').textContent=
+      `${weekStart.getDate()} ${SMONTHS[weekStart.getMonth()]} – ${last.getDate()} ${SMONTHS[last.getMonth()]} ${y}`;
+    let html='<div class="cal-week">';
+    for(let i=0;i<7;i++){
+      const date=new Date(weekStart);date.setDate(weekStart.getDate()+i);
+      const isTod=date.getTime()===today.getTime();
+      const planDay=dayForDate(date);
+      const tasks=planDay?planDay.tasks:[];
+      const iso=date.toISOString().slice(0,10);
+      html+=`<div class="week-col${isTod?' today-col':''}${planDay?' has-day':''}"
+        onclick="calClick('${iso}')" ${makeDropHandlers(iso)}>
+        <div class="week-hdr">
+          <div class="week-dow">${DOWS[i]}</div>
+          <div class="week-num${isTod?' today-num':''}">${date.getDate()}</div>
+        </div>
+        <div class="week-tasks">`;
+      tasks.slice(0,5).forEach(t=>{
+        html+=`<div class="week-pill" style="background:${t.color||COLORS[0]}">${escH(t.text)}</div>`;
+      });
+      if(tasks.length>5)html+=`<div class="week-more">+${tasks.length-5} daha</div>`;
+      html+=`</div></div>`;
+    }
+    html+='</div>';
+    body.innerHTML=html;
+  }
+}
+
+function calClick(iso){
+  const date=new Date(iso+'T12:00:00');
+  const day=getOrCreateDay(date);
+  data.activeDay=day.id;
+  showPage('plan');render();
+}
+function calDrop(e,iso){
+  e.preventDefault();
+  if(!dragItem)return;
+  const date=new Date(iso+'T12:00:00');
+  const day=getOrCreateDay(date);
+  day.tasks.push({id:'t'+(++_ti),text:dragItem.text,duration:dragItem.duration||'',done:false,color:dragItem.color||COLORS[0]});
+  dragItem=null;save();renderCal();toast('Görev tarihe eklendi ✓');
+}
+
+// ── MAIN ──
+function render(){renderPlan();save();}
+
+load();render();
+</script>
+</body>
+</html>
